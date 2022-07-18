@@ -140,12 +140,13 @@ function App() {
   },[addresses])
   
   return (
-  <div>hi <button onClick={()=>{
-    addAdressHandler(dummyAddress);
-  }}>Add{addresses.length>0&& addresses[addresses.length-1].id}</button><br /><br />
-  <button onClick={()=>{ editAdressHandler(dummyAddressEdit)}}>Edit</button><br /><br />
-  <button onClick={()=>{ deleteHandler(addresses[addresses.length-1].id)}}>Delete</button>
-  </div>
+  // <div>hi <button onClick={()=>{
+  //   addAdressHandler(dummyAddress);
+  // }}>Add{addresses.length>0&& addresses[addresses.length-1].id}</button><br /><br />
+  // <button onClick={()=>{ editAdressHandler(dummyAddressEdit)}}>Edit</button><br /><br />
+  // <button onClick={()=>{ deleteHandler(addresses[addresses.length-1].id)}}>Delete</button>
+  // </div>
+  <Navbar />
   );
 }
 
