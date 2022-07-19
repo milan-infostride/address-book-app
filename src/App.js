@@ -1,8 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
 import Navbar from './components/navbar/Navbar';
+import SecondaryMenuBar from './components/SecondryMenuBar/SecondaryMenuBar';
 import MyClassComponent from './components/MyClassComponent';
 import { useEffect, useReducer } from 'react';
+import AddressCard from './components/ListingAdresses/AddressCard';
+import AddressList from './components/ListingAdresses/AddressList';
 
 function App() {
   let dummyAddress = {
@@ -140,13 +143,11 @@ function App() {
   },[addresses])
   
   return (
-  // <div>hi <button onClick={()=>{
-  //   addAdressHandler(dummyAddress);
-  // }}>Add{addresses.length>0&& addresses[addresses.length-1].id}</button><br /><br />
-  // <button onClick={()=>{ editAdressHandler(dummyAddressEdit)}}>Edit</button><br /><br />
-  // <button onClick={()=>{ deleteHandler(addresses[addresses.length-1].id)}}>Delete</button>
-  // </div>
-  <Navbar />
+    <>
+      <Navbar />
+      <SecondaryMenuBar />
+      <AddressList />
+    </>
   );
 }
 

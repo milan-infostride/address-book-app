@@ -23,7 +23,6 @@ const Navbar = () => {
     let listbg = grey[500];
     let iconsx = {color: '#fff', pr:1}
     let theme = useTheme();
-    let isSmallScreen = useMediaQuery(theme.breakpoints.up('xs'))
     let isDesktop = useMediaQuery(theme.breakpoints.up('md'));
     const [topOpen,setTopOpen] = useState(false);
     const [loginOpen,setLoginOpen] = useState(false);
@@ -56,7 +55,8 @@ const Navbar = () => {
             backgroundColor: bgColor,
             color: '#fff',
             py: 2,
-            alignItems: 'center'
+            alignItems: 'center',
+            mb: !isDesktop?0:2
         }}>
           <Grid item sx={{display: 'flex-item',alignSelf: 'center',flexGrow:1, ml: 1}}>
             <HomeTwoToneIcon  sx={{
@@ -79,19 +79,21 @@ const Navbar = () => {
             </Grid>
             <Grid Item sx={{display: 'flex-item',ml:0.3}}>Hello User</Grid>
             </Link>
+            { isDesktop &&
             <LoginButton ref={myButton} size='small' sx={{ml:1,backgroundColor:listbg,color:'#fff'}} variant="contained" endIcon={<ArrowDropDownIcon />} startIcon={<LockIcon />}
               onClick={(e)=>{
                 let pos = myButton.current.getBoundingClientRect();
                 console.log(pos.left,pos.right)
-                setListLeft(pos.left);
-                setListTop(pos.top+myButton.current.clientHeight)
-                setListWidth(myButton.current.clientWidth) ;
+                setListLeft((pos.left)+'px');
+                setListTop(parseInt(pos.top+myButton.current.clientHeight-3)+'px')
+                setListWidth(myButton.current.clientWidth+0.5) ;
                 setMobLoginOpen((prevState)=>{ console.log();return !prevState})
               }}
             >
               Login/Signup
               
             </LoginButton>
+            }
             
           </Grid>
           
@@ -100,7 +102,7 @@ const Navbar = () => {
           </Grid>} 
           
         </Grid>
-        <Collapse orientation="vertical" in={mobLoginOpen} sx={{ width:listWidth,zIndex:999999,position:'absolute',left:{listLeft},top:{listTop}}}>
+        <Collapse orientation="vertical" in={mobLoginOpen} sx={{ width:listWidth,zIndex:999999,position:'absolute',left:listLeft,top:listTop}}>
               {/* <List className="mylist" sx={{ backgroundColor:listbg}}>
                 <ListItem>
                   <ListItemButton>
@@ -120,12 +122,12 @@ const Navbar = () => {
                   </ListItemButton>
                 </ListItem>
               </List> */}
-              <div style={{backgroundColor: listbg,padding: '0.5em'}}>
-                <div style={{padding: '0.5em'}}><VpnKeyIcon/> Login</div>
+              <div style={{backgroundColor: listbg,color:'#fff',fontSize:'0.9em'}}>
+                <div style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><VpnKeyIcon/> <span style={{paddingLeft:'0.6em'}}>Login</span></div>
                 <Divider/>
-                <div><PersonIcon/> Signup</div>
+                <div style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><PersonIcon/> <span style={{paddingLeft:'0.6em'}}>Signup</span></div>
               </div>
-            </Collapse>
+        </Collapse>
         <Collapse in={topOpen} sx={{backgroundColor: listbg, color:'#fff'}}>
           <List sx={{color: '#fff'}}>
             <ListItem disablePadding>
