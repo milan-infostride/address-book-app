@@ -49,7 +49,7 @@ function App() {
     
     
   }
-  const editAdressHandler = (newAddress)=>{
+  const editAddressHandler = (newAddress)=>{
     fetch(' http://localhost:3000/addresses/'+newAddress.id,{
       method: 'PUT',
       body: JSON.stringify(newAddress),
@@ -145,8 +145,8 @@ function App() {
   return (
     <>
       <Navbar />
-      <SecondaryMenuBar />
-      <AddressList />
+      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler}  />
+      <AddressList addresses={addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler} />
     </>
   );
 }

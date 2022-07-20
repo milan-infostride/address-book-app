@@ -7,12 +7,14 @@ import AddIcon from '@mui/icons-material/Add';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { useRef, useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import './centerModal.css'
 
 
 import AddressModal from "./AddressModal";
 import { createRef } from "react";
+import { StarRateSharp } from "@mui/icons-material";
+import { isValidDateValue } from "@testing-library/user-event/dist/utils";
 // import { useTheme } from "@emotion/react";
 
 
@@ -46,7 +48,7 @@ import { createRef } from "react";
 //     },
 //   }));
 
-const SecondaryMenuBar = () => {
+const SecondaryMenuBar = (props) => {
     let theme = useTheme();
     let isDesktop = useMediaQuery(theme.breakpoints.up('md'));
     const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -104,7 +106,11 @@ const SecondaryMenuBar = () => {
     const [modalState,setModalState] = useState(false);
     const [modalHeight,setModalHeight] =useState();
     const [modalWidth,setModalWidth] = useState();
+    const [selectState,setSelectState] = useState();
+    const states = ['Punjab','Haryana','Himachal Pardesh','Mharashtra']
     const ref = useRef();
+    const textRef = useRef();
+    const [textWidth,setTextWidth] = useState();
     const openAddModal = ()=>{
         
         
@@ -112,6 +118,7 @@ const SecondaryMenuBar = () => {
         setTimeout(()=>{console.log(ref.current.clientHeight,ref.current.clientWidth);
             setModalHeight(ref.current.clientHeight);
             setModalWidth(ref.current.clientWidth);
+            setTextWidth(textRef.current.clientWidth);
             ref.current.classList.add('centerModal')
         },500)
     }
@@ -121,7 +128,96 @@ const SecondaryMenuBar = () => {
     const style = {
         justifyContent: 'center',
         alignItems: 'center'
+    }
+    
+    const initAddFormInputs = {
+        name: {
+            value: '',
+            errors:{
+                required: 'Field is required'
+            },
+            error: false,
+            helper_text: ''
+        },
+        building_location:{
+            value: '',
+            errors: {
+                required: 'Field is required'
+            },
+            error: false,
+            helper_text: ''
+        },
+        city:{
+            value: '',
+            errors: {
+                required: 'Field is required'
+            },
+            error: false,
+            helper_text: ''
+        },
+        state: {
+            value: '',
+            errors: {
+                required: 'Field is required'
+            },
+            error: false,
+            helper_text: '',
+
+        },
+        isValid: true,
+    }
+    const addFormInputsReducer = (prevState,action)=>{
+        if(action.type=='fieldChanged'){
+            let oldState = {...prevState};
+            let changedfield = action.value.fieldName;
+            oldState[changedfield].value = action.value.newValue;
+            if(oldState[changedfield].value.length!=0){
+                oldState[changedfield].error = false;
+                oldState[changedfield].helper_text = '';
+            }
+            return oldState;
+        }
+        if(action.type=='validate'){
+            let oldState = {...prevState};
+            for(let prop in oldState){
+                if(prop !='isValid'){
+                    if(oldState[prop].value.length==0){
+                        oldState.isValid = false;
+                        oldState[prop].error = true;
+                        oldState[prop].helper_text = oldState[prop].errors.required
+                    }
+                }
+            }
+            
+            return oldState;
+            
+        }
     } 
+    // const [addFormInputsErrors,setAddFormInputErrors] =  useState
+
+    const [addFormInputs,addFormInputsDispatch] = useReducer(addFormInputsReducer,initAddFormInputs);
+    const fieldChangeHandler= (e,name)=>{
+        let action = {
+            type: 'fieldChanged',
+            value:{
+                fieldName: name,
+                newValue: e.target.value
+            }
+        }
+        addFormInputsDispatch(action);
+
+    }
+    const addClicked = ()=>{
+        let newAddress = {};
+        for(let prop in addFormInputs){
+            if(prop !='isValid'){
+                newAddress[prop] = addFormInputs[prop].value
+            }
+        }
+        newAddress.date = new Date().getTime();
+        props.addAdressHandler(newAddress);
+        closeAddModal();
+    }
     
     return ( 
         <Grid container sx={{backgroundColor: listColor}} spacing={2}>
@@ -160,7 +256,7 @@ const SecondaryMenuBar = () => {
                 </FormControl>
             </Grid>
             <Grid item xs={6} md={3} sx={{display:'flex-item',py:2,alignItems:'middle',justifyContent:'center'}}>
-              <Button color='secondary' size='small' variant="contained">Total = 0</Button>
+              <Button color='secondary' size='small' variant="contained">Total = {props.addresses.length}</Button>
                     
                 
             </Grid>
@@ -188,13 +284,36 @@ const SecondaryMenuBar = () => {
                 />
                 <CardContent>
                     <Grid container sx={{justifyContent:'center'}}>
-                        <Grid item mb={1}><TextField  id='bl' label='Building &#38; Location' variant="outlined" size='small'></TextField></Grid>
-                        <Grid item mb={1}><TextField id='city' label='City' size='small'></TextField></Grid>
+                    <Grid item mb={2}><TextField id='name' label='Name' size='small' onChange={(e)=>{ fieldChangeHandler(e,'name')}} color='secondary' value={addFormInputs.name.value} error={addFormInputs.name.error} helperText={addFormInputs.name.helper_text} ref={textRef}></TextField></Grid>
+
+                        <Grid item mb={2}><TextField multiline sx={{width: textWidth}} onChange={(e)=>{ fieldChangeHandler(e,'building_location')}} value={addFormInputs.building_location.value} error={addFormInputs.building_location.error} helperText={addFormInputs.building_location.helper_text}  rows={3} id='bl' label='Building &#38; Location' variant="outlined"  color='secondary' size='small'></TextField></Grid>
+                        <Grid item mb={2}><TextField id='city' label='City' size='small' onChange={(e)=>{ fieldChangeHandler(e,'city')}} color='secondary' value={addFormInputs.city.value} error={addFormInputs.city.error} helperText={addFormInputs.city.helper_text} ref={textRef}></TextField></Grid>
+                        <Grid item mb={2}>
+                            <FormControl color='secondary' size="small" variant="filled" sx={{ minWidth: 120 , width: textWidth}}>
+                                <InputLabel size="small" id="demo-simple-select-filled-label">State</InputLabel>
+                                <Select
+                                    size='small'
+                                    labelId="demo-simple-select-filled-label"
+                                    id="demo-simple-select-filled"
+                                    value={addFormInputs.state.value}
+                                    onChange={(e)=>{ fieldChangeHandler(e,'state')}}
+                                >
+                                    {states.map((item,index)=>{return <MenuItem value={item} key={index}>{item}</MenuItem>})}
+                                    {/* <MenuItem value={'dl'}>Date (Latest)</MenuItem>
+                                    <MenuItem value={'do'}>Date (Oldest)</MenuItem>
+
+                                    <MenuItem value={'a-z'}>Name (A-Z)</MenuItem>
+                                    <MenuItem value={'z-a'}>Name (Z-A)</MenuItem> */}
+
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item mb={1}><Button sx={{width: textWidth}} variant='contained' startIcon={<AddCircleIcon />} size='small' color='secondary' onClick={()=>{addFormInputsDispatch({type:'validate'});addClicked()}}>Add</Button></Grid>
                     </Grid>
                 </CardContent>
-                <CardActions disableSpacing>
-                    <Button variant='contained' startIcon={<AddCircleIcon />} size='small' color='success'>Delete</Button>
-                </CardActions>
+                {/* <CardActions disableSpacing>
+                    
+                </CardActions> */}
             </Card>
             
             

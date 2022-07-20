@@ -2,21 +2,11 @@
   "addresses": [
     {
       "name": "milan",
-      "title": "title",
-      "body": "body",
+      "building_location": "ansnk ljslwnjd lwjldwj",
+      "city": "ljljl",
+      "state": "Punjab",
+      "date": 1658346153889,
       "id": 1
-    },
-    {
-      "name": "milan",
-      "title": "title",
-      "body": "body",
-      "id": 2
-    },
-    {
-      "name": "milan",
-      "title": "title",
-      "body": "body",
-      "id": 3
     }
   ],
   "users": []

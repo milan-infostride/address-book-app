@@ -2,45 +2,61 @@ import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Divider, Gr
 import { purple } from "@mui/material/colors";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-const AddressCard = () => {
+import { useRef } from "react";
+import { useState } from "react";
+import EditAddressModal from "./EditAddressModal";
+const AddressCard = (props) => {
     
+    // let actionRef = useRef();
+    // setTimeout(()=>{console.log(actionRef); setActionHeight(actionRef.current.clientHeight)},500)
     
+    // const [actionHeight,setActionHeight] = useState();
+    const [editModalState,seteditModalState] = useState(false);
+    // const [textWidth,setTextWidth] = useState();
+
+    const closeEditModal = ()=>{seteditModalState(false)};
+    const openEditModal = ()=>{
+        
+        seteditModalState(true);
+    };
+
     
     return ( 
-        <Card sx={{ maxWidth: 345 }} raised>
+        <Card sx={{ maxWidth: 345,}} raised>
             <CardHeader
                 avatar={
                 <Avatar sx={{ bgcolor: purple[500] }} aria-label="recipe">
-                    R
+                    {props.address.name.charAt(0).toUpperCase()}
                 </Avatar>
                 }
                 
-                title="Shrimp and Chorizo Paella"
-                subheader="September 14, 2016"
+                title={props.address.name}
+                subheader={props.address.date}
             />
             <CardContent>
                 <Grid container >
                     <Grid container item mb={0.6}>
                         <Grid item sx={{display:'flex-item'}} xs={12} color='text.secondary'>Building &#38; Location</Grid>
-                        <Typography variant='body2' >172/5 sbp homes ext 3 tower 4 sector 126 khgwdskwhduikwhduiowhduiwhd iuwhduiwdhui whkg uguiguigmmmmmm</Typography>
+                        <Typography variant='body2' >{props.address.building_location}</Typography>
                     </Grid>
                     <Divider></Divider>
                     <Grid container item mb={0.6}>
                         <Grid item sx={{display:'flex-item'}} xs={12} color='text.secondary'>City</Grid>
-                        <Grid item sx={{display:'flex-item'}} xs={12} >Mohali</Grid>
+                        <Grid item sx={{display:'flex-item'}} xs={12} >{props.address.city}</Grid>
                     </Grid>
                     <Divider />
                     <Grid container item >
                         <Grid item sx={{display:'flex-item'}} xs={12} color='text.secondary'>State</Grid>
-                        <Grid item sx={{display:'flex-item'}} xs={12} >Punjab</Grid>
+                        <Grid item sx={{display:'flex-item'}} xs={12} >{props.address.state}</Grid>
                     </Grid>
                    
                 </Grid>
             </CardContent>
-            <CardActions disableSpacing>
-                <Button variant='contained' startIcon={<DeleteIcon />} size='small' color='error'>Delete</Button>
-                <Button variant='contained' sx={{ml:2}} startIcon={<EditIcon />} size='small' color='secondary'>Edit</Button>
+            <CardActions   disableSpacing>
+                <Button variant='contained' startIcon={<DeleteIcon />} size='small' color='error' onClick={()=>{props.deleteHandler(props.address.id)}}>Delete</Button>
+                <Button variant='contained' sx={{ml:2}} startIcon={<EditIcon />} size='small' color='secondary' onClick={()=>{openEditModal()}}>Edit</Button>
             </CardActions>
+            <EditAddressModal editAddressHandler = {props.editAddressHandler} initialState={props.address} openEditModal={openEditModal} closeEditModal={closeEditModal} editModalState={editModalState} />
       </Card>
      );
 }
