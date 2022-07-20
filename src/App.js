@@ -127,6 +127,37 @@ function App() {
       
       return lastArray;
     }
+    if(action.type=='dl'){
+      console.log('in action dl')
+      let lastArray = [...prevState];
+      lastArray.sort((a,b)=>{
+        return b.date - a.date;
+      })
+      return lastArray;
+    }
+    if(action.type=='do'){
+      let lastArray = [...prevState];
+      lastArray.sort((a,b)=>{
+        return a.date - b.date;
+      })
+      return lastArray;
+    }
+    if(action.type=='a-z'){
+      let lastArray = [...prevState];
+      
+      lastArray.sort((a,b)=>{
+        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      })
+      return lastArray;
+    }
+    if(action.type=='z-a'){
+      let lastArray = [...prevState];
+      
+      lastArray.sort((a,b)=>{
+        return b.name.toLowerCase().localeCompare(a.name.toLowerCase())
+      })
+      return lastArray;
+    }
   }
   // let myAddresses = []
   useEffect(()=>{
@@ -145,7 +176,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler}  />
+      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} addressDispatch={addressDispatch} />
       <AddressList addresses={addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler} />
     </>
   );

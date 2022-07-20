@@ -13,6 +13,9 @@ const EditAddressModal = (props) => {
     const states = ['Punjab','Haryana','Himachal Pardesh','Mharashtra']
 
     const addFormInputsReducer = (prevState,action)=>{
+        if(action.type=='init'){
+            return props.initialState;
+        }
         if(action.type=='fieldChanged'){
             let oldState = {...prevState};
             oldState[action.value.fieldName] = action.value.newValue;
@@ -33,15 +36,19 @@ const EditAddressModal = (props) => {
     const editAddressHandler = ()=>{
         let newAddress = {...addFormInputs};
         props.editAddressHandler(newAddress);
+        addFormInputsDispatch({type:'init'})
         props.closeEditModal();
     }
-
+    const closeEditMoadal = ()=>{
+        addFormInputsDispatch({type:'init'});
+        props.closeEditModal();
+    }
     return ( 
         <Modal
             // BackdropProps={style}
             // ref={ref}
             open={props.editModalState}
-            onClose={props.closeEditModal}
+            onClose={closeEditMoadal}
             
         >
             <Card sx={{ width: isDesktop?'auto':330, maxWidth: isDesktop?345:454,position: 'absolute',

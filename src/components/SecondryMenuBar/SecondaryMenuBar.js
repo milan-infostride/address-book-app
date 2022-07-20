@@ -15,6 +15,7 @@ import AddressModal from "./AddressModal";
 import { createRef } from "react";
 import { StarRateSharp } from "@mui/icons-material";
 import { isValidDateValue } from "@testing-library/user-event/dist/utils";
+import { useEffect } from "react";
 // import { useTheme } from "@emotion/react";
 
 
@@ -81,7 +82,7 @@ const SecondaryMenuBar = (props) => {
         },
       }));
     
-    const [sortFilter,setSortFilter] = useState();
+    const [sortFilter,setSortFilter] = useState('');
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -114,6 +115,8 @@ const SecondaryMenuBar = (props) => {
     const openAddModal = ()=>{
         
         
+        
+        addFormInputsDispatch({type:'init'})
         setModalState(true);
         setTimeout(()=>{console.log(ref.current.clientHeight,ref.current.clientWidth);
             setModalHeight(ref.current.clientHeight);
@@ -123,6 +126,7 @@ const SecondaryMenuBar = (props) => {
         },500)
     }
     const closeAddModal = ()=>{
+        
         setModalState(false)
     }
     const style = {
@@ -156,7 +160,7 @@ const SecondaryMenuBar = (props) => {
             helper_text: ''
         },
         state: {
-            value: '',
+            value: 'do',
             errors: {
                 required: 'Field is required'
             },
@@ -167,6 +171,11 @@ const SecondaryMenuBar = (props) => {
         isValid: true,
     }
     const addFormInputsReducer = (prevState,action)=>{
+        if(action.type=='init'){
+             //let oldState = {...prevState};
+             
+            return initAddFormInputs;
+        }
         if(action.type=='fieldChanged'){
             let oldState = {...prevState};
             let changedfield = action.value.fieldName;
@@ -216,8 +225,15 @@ const SecondaryMenuBar = (props) => {
         }
         newAddress.date = new Date().getTime();
         props.addAdressHandler(newAddress);
+        addFormInputsDispatch({type:'init'})
         closeAddModal();
+        
     }
+    const onStateChange = (e)=>{
+
+        props.addressDispatch({type: e.target.value})
+    }
+    
     
     return ( 
         <Grid container sx={{backgroundColor: listColor}} spacing={2}>
@@ -243,7 +259,7 @@ const SecondaryMenuBar = (props) => {
                         labelId="demo-simple-select-filled-label"
                         id="demo-simple-select-filled"
                         value={sortFilter}
-                        onChange={(e)=>{setSortFilter(e.target.value)}}
+                        onChange={(e)=>{setSortFilter(e.target.value); onStateChange(e)}}
                     >
                     
                         <MenuItem value={'dl'}>Date (Latest)</MenuItem>
@@ -296,7 +312,7 @@ const SecondaryMenuBar = (props) => {
                                     labelId="demo-simple-select-filled-label"
                                     id="demo-simple-select-filled"
                                     value={addFormInputs.state.value}
-                                    onChange={(e)=>{ fieldChangeHandler(e,'state')}}
+                                    onChange={(e)=>{ fieldChangeHandler(e,'state'); }}
                                 >
                                     {states.map((item,index)=>{return <MenuItem value={item} key={index}>{item}</MenuItem>})}
                                     {/* <MenuItem value={'dl'}>Date (Latest)</MenuItem>
