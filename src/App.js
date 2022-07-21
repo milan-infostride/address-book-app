@@ -6,6 +6,7 @@ import MyClassComponent from './components/MyClassComponent';
 import { useEffect, useReducer } from 'react';
 import AddressCard from './components/ListingAdresses/AddressCard';
 import AddressList from './components/ListingAdresses/AddressList';
+import commonFunctions from './components/commanFunctions';
 
 function App() {
   let dummyAddress = {
@@ -27,7 +28,7 @@ function App() {
   //   console.log('init address = ',addresses);
   //   return addresses;
   // }
-  const addAdressHandler =  (newAddress)=>{
+  const addAdressHandler =  (newAddress,sortType)=>{
     let action = {
       type:'add',
       //value: {}
@@ -45,6 +46,10 @@ function App() {
       action.value = res;
       console.log('qction value',action.value);
       addressDispatch(action);
+      if(sortType.length>0){
+        let actionSort = {type:sortType}
+        addressDispatch(actionSort)
+      }
     })
     
     
@@ -86,6 +91,16 @@ function App() {
         addressDispatch(action);
       });
 
+  }
+  const searchHandler = (keywords)=>{
+    console.log('keywords',keywords)
+    let action = {
+      type:'search',
+      value:{
+        keywords:keywords,
+      }
+    }
+    addressDispatch(action);
   }
   const addressReducer = (prevState,action)=>{
     if(action.type=='initialize'){
@@ -158,9 +173,37 @@ function App() {
       })
       return lastArray;
     }
+    if(action.type=='search'){
+      let keywords = action.value.keywords;
+      let lastArray = [...prevState];
+      lastArray = lastArray.filter((item)=>{
+        let itemKeys = item.name.split(' ');
+        // let commonFunctions = JSON.parse(localStorage.getItem('commonFunctions'));
+        itemKeys = commonFunctions.sanatizeWords(itemKeys);
+        for(let i=0;i<keywords.length;i++){
+          if(itemKeys.includes(keywords[i]))
+            return item;
+        }
+      })
+      return lastArray;
+    }
   }
+
   // let myAddresses = []
   useEffect(()=>{
+    // const commanFunctions = {
+    //   sanatizeWords: (words)=>{
+    //     words = words.map((word)=>{
+    //       return word.trim();
+    //     })
+    //     words = words.map((word=>{
+    //       return word.search(/\W/g);
+    //     }))
+    //     return words;
+
+    //   }
+    // }
+    //localStorage.setItem('commanFunctions',JSON.stringify(commanFunctions));
      fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ addressDispatch({
       type: 'initialize',
       value: res
@@ -176,7 +219,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} addressDispatch={addressDispatch} />
+      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} searchHandler={searchHandler} addressDispatch={addressDispatch} />
       <AddressList addresses={addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler} />
     </>
   );

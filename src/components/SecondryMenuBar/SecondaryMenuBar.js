@@ -16,6 +16,7 @@ import { createRef } from "react";
 import { StarRateSharp } from "@mui/icons-material";
 import { isValidDateValue } from "@testing-library/user-event/dist/utils";
 import { useEffect } from "react";
+import commanFunctions from "../commanFunctions";
 // import { useTheme } from "@emotion/react";
 
 
@@ -71,10 +72,8 @@ const SecondaryMenuBar = (props) => {
           transition: theme.transitions.create('width'),
           width: '100%',
           [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-              width: '20ch',
-            },
+            width: '20ch',
+            
           },
           [theme.breakpoints.down('sm')]: {
             width: '75%'
@@ -216,7 +215,7 @@ const SecondaryMenuBar = (props) => {
         addFormInputsDispatch(action);
 
     }
-    const addClicked = ()=>{
+    const addClicked = (sortType)=>{
         let newAddress = {};
         for(let prop in addFormInputs){
             if(prop !='isValid'){
@@ -224,7 +223,7 @@ const SecondaryMenuBar = (props) => {
             }
         }
         newAddress.date = new Date().getTime();
-        props.addAdressHandler(newAddress);
+        props.addAdressHandler(newAddress,sortType);
         addFormInputsDispatch({type:'init'})
         closeAddModal();
         
@@ -233,6 +232,19 @@ const SecondaryMenuBar = (props) => {
 
         props.addressDispatch({type: e.target.value})
     }
+    let searchState = ''
+    // const [searchState,setSearchState] = useState('');
+    // useEffect(()=>{
+    //     let searchTimeout = setTimeout(()=>{
+    //         if(searchState.length>0){
+    //             let keywords = searchState.split(' ');
+    //             // let commanFunctions = JSON.parse(localStorage.getItem('commanFunctions'));
+    //             keywords = commanFunctions.sanatizeWords(keywords);
+    //             props.searchHandler(keywords);
+    //         }
+    //     },1000)
+    //     return ()=>{clearTimeout(searchTimeout)}
+    // },[searchState])
     
     
     return ( 
@@ -241,13 +253,15 @@ const SecondaryMenuBar = (props) => {
                 <Button variant='contained' size='small' onClick={openAddModal} color="secondary" endIcon={<AddCircleIcon />}>Add</Button>
             </Grid>
             <Grid item xs={6} md={3} sx={{display:'flex-item',py:2,alignItems:'middle',justifyContent:'center'}}>
-                <Search>
+                <Search >
                     <SearchIconWrapper>
                         <SearchIcon />
                     </SearchIconWrapper>
                     <StyledInputBase
-                    placeholder="Search…"
+                    //placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
+                    //value={searchState}
+                    onChange={(e)=>{searchState = e.target.value}}
                     />
             </Search>
             </Grid>
@@ -324,7 +338,7 @@ const SecondaryMenuBar = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item mb={1}><Button sx={{width: textWidth}} variant='contained' startIcon={<AddCircleIcon />} size='small' color='secondary' onClick={()=>{addFormInputsDispatch({type:'validate'});addClicked()}}>Add</Button></Grid>
+                        <Grid item mb={1}><Button sx={{width: textWidth}} variant='contained' startIcon={<AddCircleIcon />} size='small' color='secondary' onClick={()=>{addFormInputsDispatch({type:'validate'});addClicked(sortFilter)}}>Add</Button></Grid>
                     </Grid>
                 </CardContent>
                 {/* <CardActions disableSpacing>
