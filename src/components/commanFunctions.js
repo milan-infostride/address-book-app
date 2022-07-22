@@ -2,7 +2,7 @@ const commanFunctions = {
     sanatizeWords: (words)=>{
         console.log(words);
       words = words.map((word)=>{
-        return word.trim();
+        return word.trim().toLowerCase();
       })
       console.log(words);
       words = words.filter((word=>{

@@ -7,6 +7,8 @@ import { useEffect, useReducer } from 'react';
 import AddressCard from './components/ListingAdresses/AddressCard';
 import AddressList from './components/ListingAdresses/AddressList';
 import commonFunctions from './components/commanFunctions';
+var initialAddresses = [];
+
 
 function App() {
   let dummyAddress = {
@@ -174,21 +176,22 @@ function App() {
       return lastArray;
     }
     if(action.type=='search'){
-      let keywords = action.value.keywords;
-      let lastArray = [...prevState];
+      let keyWords = action.value.keyWords;
+      console.log('initial = ',initialAddresses);
+      let lastArray = initialAddresses;
       lastArray = lastArray.filter((item)=>{
         let itemKeys = item.name.split(' ');
         // let commonFunctions = JSON.parse(localStorage.getItem('commonFunctions'));
         itemKeys = commonFunctions.sanatizeWords(itemKeys);
-        for(let i=0;i<keywords.length;i++){
-          if(itemKeys.includes(keywords[i]))
+        for(let i=0;i<keyWords.length;i++){
+          if(itemKeys.includes(keyWords[i]))
             return item;
         }
       })
       return lastArray;
     }
   }
-
+  
   // let myAddresses = []
   useEffect(()=>{
     // const commanFunctions = {
@@ -204,7 +207,7 @@ function App() {
     //   }
     // }
     //localStorage.setItem('commanFunctions',JSON.stringify(commanFunctions));
-     fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ addressDispatch({
+     fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ initialAddresses=res; addressDispatch({
       type: 'initialize',
       value: res
     })});

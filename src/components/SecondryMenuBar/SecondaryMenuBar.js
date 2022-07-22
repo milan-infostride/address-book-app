@@ -13,10 +13,11 @@ import './centerModal.css'
 
 import AddressModal from "./AddressModal";
 import { createRef } from "react";
-import { StarRateSharp } from "@mui/icons-material";
+import { KeyOutlined, StarRateSharp } from "@mui/icons-material";
 import { isValidDateValue } from "@testing-library/user-event/dist/utils";
 import { useEffect } from "react";
 import commanFunctions from "../commanFunctions";
+import useFormInput from "../../hooks/use-FormInput";
 // import { useTheme } from "@emotion/react";
 
 
@@ -50,56 +51,64 @@ import commanFunctions from "../commanFunctions";
 //     },
 //   }));
 
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }));
+
+  const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: '12ch',
+        '&:focus': {
+            width: '20ch',
+          },
+        
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '75%'
+    }
+    },
+  }));
+  const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    height: '2.5em',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(1),
+      width: 'auto',
+      
+
+    },
+    [theme.breakpoints.down('sm')]: {
+        width: '75%'
+    }
+  }));
+
 const SecondaryMenuBar = (props) => {
     let theme = useTheme();
     let isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-    const SearchIconWrapper = styled('div')(({ theme }) => ({
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }));
     
-      const StyledInputBase = styled(InputBase)(({ theme }) => ({
-        color: 'inherit',
-        '& .MuiInputBase-input': {
-          padding: theme.spacing(1, 1, 1, 0),
-          // vertical padding + font size from searchIcon
-          paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-          transition: theme.transitions.create('width'),
-          width: '100%',
-          [theme.breakpoints.up('sm')]: {
-            width: '20ch',
-            
-          },
-          [theme.breakpoints.down('sm')]: {
-            width: '75%'
-        }
-        },
-      }));
     
     const [sortFilter,setSortFilter] = useState('');
-    const Search = styled('div')(({ theme }) => ({
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
-        '&:hover': {
-          backgroundColor: alpha(theme.palette.common.white, 0.25),
-        },
-        marginLeft: 0,
-        width: '100%',
-        height: '2.5em',
-        [theme.breakpoints.up('sm')]: {
-          marginLeft: theme.spacing(1),
-          width: 'auto',
-        },
-        [theme.breakpoints.down('sm')]: {
-            width: '75%'
-        }
-      }));
+    
 
     let bgColor = grey[900];
     let listColor = grey[500];
@@ -115,7 +124,10 @@ const SecondaryMenuBar = (props) => {
         
         
         
-        addFormInputsDispatch({type:'init'})
+        name.reset();
+        building_location.reset();
+        city.reset();
+        state.reset();
         setModalState(true);
         setTimeout(()=>{console.log(ref.current.clientHeight,ref.current.clientWidth);
             setModalHeight(ref.current.clientHeight);
@@ -133,98 +145,41 @@ const SecondaryMenuBar = (props) => {
         alignItems: 'center'
     }
     
-    const initAddFormInputs = {
-        name: {
-            value: '',
-            errors:{
-                required: 'Field is required'
-            },
-            error: false,
-            helper_text: ''
-        },
-        building_location:{
-            value: '',
-            errors: {
-                required: 'Field is required'
-            },
-            error: false,
-            helper_text: ''
-        },
-        city:{
-            value: '',
-            errors: {
-                required: 'Field is required'
-            },
-            error: false,
-            helper_text: ''
-        },
-        state: {
-            value: 'do',
-            errors: {
-                required: 'Field is required'
-            },
-            error: false,
-            helper_text: '',
-
-        },
-        isValid: true,
+    
+    const requiredValidator = (data)=>{
+        if(data.trim()===''){
+            return {
+                valid: false,
+                helperData: 'Field is required'
+            }
+        }
+        else{
+            return{
+                valid: true,
+                helperData: ''
+            }
+        }
     }
-    const addFormInputsReducer = (prevState,action)=>{
-        if(action.type=='init'){
-             //let oldState = {...prevState};
-             
-            return initAddFormInputs;
-        }
-        if(action.type=='fieldChanged'){
-            let oldState = {...prevState};
-            let changedfield = action.value.fieldName;
-            oldState[changedfield].value = action.value.newValue;
-            if(oldState[changedfield].value.length!=0){
-                oldState[changedfield].error = false;
-                oldState[changedfield].helper_text = '';
-            }
-            return oldState;
-        }
-        if(action.type=='validate'){
-            let oldState = {...prevState};
-            for(let prop in oldState){
-                if(prop !='isValid'){
-                    if(oldState[prop].value.length==0){
-                        oldState.isValid = false;
-                        oldState[prop].error = true;
-                        oldState[prop].helper_text = oldState[prop].errors.required
-                    }
-                }
-            }
-            
-            return oldState;
-            
-        }
-    } 
-    // const [addFormInputsErrors,setAddFormInputErrors] =  useState
+    const name = useFormInput(requiredValidator,'');
+    const building_location = useFormInput(requiredValidator,'');
+    const city = useFormInput(requiredValidator,'');
+    const state = useFormInput(requiredValidator,'');
+    const [isFormValid,setIsFormValid] = useState(false);
+    useEffect(()=>{
+        setIsFormValid(!(name.isValid && building_location.isValid && city.isValid && state.isValid))
 
-    const [addFormInputs,addFormInputsDispatch] = useReducer(addFormInputsReducer,initAddFormInputs);
-    const fieldChangeHandler= (e,name)=>{
-        let action = {
-            type: 'fieldChanged',
-            value:{
-                fieldName: name,
-                newValue: e.target.value
-            }
-        }
-        addFormInputsDispatch(action);
-
-    }
+    },[name.isValid,building_location.isValid,city.isValid,state.isValid]) 
     const addClicked = (sortType)=>{
-        let newAddress = {};
-        for(let prop in addFormInputs){
-            if(prop !='isValid'){
-                newAddress[prop] = addFormInputs[prop].value
-            }
-        }
+        let newAddress = {
+            name: name.inputValue,
+            building_location: building_location.inputValue,
+            city: city.inputValue,
+            state: state.inputValue
+        
+        };
+        
         newAddress.date = new Date().getTime();
         props.addAdressHandler(newAddress,sortType);
-        addFormInputsDispatch({type:'init'})
         closeAddModal();
         
     }
@@ -232,7 +187,8 @@ const SecondaryMenuBar = (props) => {
 
         props.addressDispatch({type: e.target.value})
     }
-    let searchState = ''
+    // let searchState = ''
+
     // const [searchState,setSearchState] = useState('');
     // useEffect(()=>{
     //     let searchTimeout = setTimeout(()=>{
@@ -245,7 +201,40 @@ const SecondaryMenuBar = (props) => {
     //     },1000)
     //     return ()=>{clearTimeout(searchTimeout)}
     // },[searchState])
+    const searchValidator = (text)=>{
+        if(text.trim()===''){
+            return {
+                valid: false,
+                helperData: 'can\'t be empty'
+            }
+        }
+        else{
+            return {
+                valid: true,
+                helperData: ''
+            }
+        }
+    }
     
+    const searchText = useFormInput(searchValidator,'')
+
+    const search= (e)=>{
+        // console.log(e.keyCode);
+        // searchText.inputValueChanged(e)
+        if(e.keyCode==13&&searchText.isValid){
+            
+            console.log(e.target.value);
+            let keyWords = commanFunctions.sanatizeWords(e.target.value.split(' '));
+            // console.log('keys'=keyWords);
+            let action = {
+                type: 'search',
+                value: {
+                    keyWords: keyWords
+                }
+            }
+            props.addressDispatch(action)
+        }
+    }
     
     return ( 
         <Grid container sx={{backgroundColor: listColor}} spacing={2}>
@@ -258,10 +247,12 @@ const SecondaryMenuBar = (props) => {
                         <SearchIcon />
                     </SearchIconWrapper>
                     <StyledInputBase
-                    //placeholder="Search…"
+                    placeholder={searchText.hasError?searchText.helperText:"Search…"}
                     inputProps={{ 'aria-label': 'search' }}
-                    //value={searchState}
-                    onChange={(e)=>{searchState = e.target.value}}
+                    value={searchText.inputValue}
+                    onChange={(e)=>{searchText.inputValueChanged(e);}}
+                    onKeyDown = {(e)=>{ search(e)}}
+                
                     />
             </Search>
             </Grid>
@@ -314,19 +305,22 @@ const SecondaryMenuBar = (props) => {
                 />
                 <CardContent>
                     <Grid container sx={{justifyContent:'center'}}>
-                    <Grid item mb={2}><TextField id='name' label='Name' size='small' onChange={(e)=>{ fieldChangeHandler(e,'name')}} color='secondary' value={addFormInputs.name.value} error={addFormInputs.name.error} helperText={addFormInputs.name.helper_text} ref={textRef}></TextField></Grid>
+                    <Grid item mb={2}><TextField id='name' label='Name' size='small' onBlur={(e)=>{name.inputValueBlur(e)}} onChange={(e)=>{name.inputValueChanged(e)}} color='secondary' value={name.inputValue} error={name.hasError} helperText={name.helperText} ref={textRef}></TextField></Grid>
 
-                        <Grid item mb={2}><TextField multiline sx={{width: textWidth}} onChange={(e)=>{ fieldChangeHandler(e,'building_location')}} value={addFormInputs.building_location.value} error={addFormInputs.building_location.error} helperText={addFormInputs.building_location.helper_text}  rows={3} id='bl' label='Building &#38; Location' variant="outlined"  color='secondary' size='small'></TextField></Grid>
-                        <Grid item mb={2}><TextField id='city' label='City' size='small' onChange={(e)=>{ fieldChangeHandler(e,'city')}} color='secondary' value={addFormInputs.city.value} error={addFormInputs.city.error} helperText={addFormInputs.city.helper_text} ref={textRef}></TextField></Grid>
+                        <Grid item mb={2}><TextField multiline sx={{width: textWidth}} onBlur={(e)=>{building_location.inputValueBlur(e)}} onChange={(e)=>{ building_location.inputValueChanged(e)}} value={building_location.inputValue} error={building_location.hasError} helperText={building_location.helperText}  rows={3} id='bl' label='Building &#38; Location' variant="outlined"  color='secondary' size='small'></TextField></Grid>
+                        <Grid item mb={2}><TextField id='city' label='City' size='small' onBlur={(e)=>{city.inputValueBlur(e)}} onChange={(e)=>{ city.inputValueChanged(e)}} color='secondary' value={city.inputValue} error={city.hasError} helperText={city.helperText} ref={textRef}></TextField></Grid>
                         <Grid item mb={2}>
                             <FormControl color='secondary' size="small" variant="filled" sx={{ minWidth: 120 , width: textWidth}}>
-                                <InputLabel size="small" id="demo-simple-select-filled-label">State</InputLabel>
+                                <InputLabel size="small" id="demo-simple-select-filled-label">State {state.helperText}</InputLabel>
                                 <Select
                                     size='small'
                                     labelId="demo-simple-select-filled-label"
                                     id="demo-simple-select-filled"
-                                    value={addFormInputs.state.value}
-                                    onChange={(e)=>{ fieldChangeHandler(e,'state'); }}
+                                    onBlur={(e)=>{state.inputValueBlur(e)}}
+                                    value={state.inputValue}
+                                    onChange={(e)=>{ state.inputValueChanged(e)}}
+                                    error={state.hasError}
+                                    //helperText={state.helperText}
                                 >
                                     {states.map((item,index)=>{return <MenuItem value={item} key={index}>{item}</MenuItem>})}
                                     {/* <MenuItem value={'dl'}>Date (Latest)</MenuItem>
@@ -338,7 +332,9 @@ const SecondaryMenuBar = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item mb={1}><Button sx={{width: textWidth}} variant='contained' startIcon={<AddCircleIcon />} size='small' color='secondary' onClick={()=>{addFormInputsDispatch({type:'validate'});addClicked(sortFilter)}}>Add</Button></Grid>
+                        <Grid item mb={1}><Button sx={{width: textWidth}} variant='contained' startIcon={<AddCircleIcon />} size='small' color='secondary' onClick={()=>{addClicked(sortFilter)}}
+                            disabled={isFormValid}
+                        >Add</Button></Grid>
                     </Grid>
                 </CardContent>
                 {/* <CardActions disableSpacing>
