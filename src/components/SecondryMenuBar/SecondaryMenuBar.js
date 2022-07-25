@@ -18,6 +18,8 @@ import { isValidDateValue } from "@testing-library/user-event/dist/utils";
 import { useEffect } from "react";
 import commanFunctions from "../commanFunctions";
 import useFormInput from "../../hooks/use-FormInput";
+import { addressActions } from "../../Stores/slices/adderesses-slice";
+import { useDispatch } from "react-redux";
 // import { useTheme } from "@emotion/react";
 
 
@@ -103,6 +105,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   }));
 
 const SecondaryMenuBar = (props) => {
+    const addressDispatch = useDispatch();
     let theme = useTheme();
     let isDesktop = useMediaQuery(theme.breakpoints.up('md'));
     
@@ -185,7 +188,7 @@ const SecondaryMenuBar = (props) => {
     }
     const onStateChange = (e)=>{
 
-        props.addressDispatch({type: e.target.value})
+        addressDispatch(addressActions.sortAddresses({sortType:e.target.value}))
     }
     // let searchState = ''
 

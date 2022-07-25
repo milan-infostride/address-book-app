@@ -7,10 +7,16 @@ import { useEffect, useReducer } from 'react';
 import AddressCard from './components/ListingAdresses/AddressCard';
 import AddressList from './components/ListingAdresses/AddressList';
 import commonFunctions from './components/commanFunctions';
+import { useSelector, useDispatch } from 'react-redux';
+import { addressActions } from './Stores/slices/adderesses-slice';
 var initialAddresses = [];
 
 
+
 function App() {
+  const addresses = useSelector(state=> state.addresses.addresses)
+const addressDispatch = useDispatch();
+
   let dummyAddress = {
     name: 'milan',
     title: 'title',
@@ -47,10 +53,11 @@ function App() {
       //return lastArray;
       action.value = res;
       console.log('qction value',action.value);
-      addressDispatch(action);
+      addressDispatch(addressActions.addAddress({newAddress:res}))
+      // addressDispatch(action);
       if(sortType.length>0){
         let actionSort = {type:sortType}
-        addressDispatch(actionSort)
+        addressDispatch(addressActions.sortAddresses({sortType:sortType}))
       }
     })
     
@@ -71,7 +78,7 @@ function App() {
         value: newAddress
         // id: newAddress.id
       }
-      addressDispatch(action);
+      addressDispatch(addressActions.editAddress({newAddress: newAddress}));
     })
     
   }
@@ -90,19 +97,19 @@ function App() {
             id: id
           }
         }
-        addressDispatch(action);
+        addressDispatch(addressActions.removeAddress({id:id}));
       });
 
   }
   const searchHandler = (keywords)=>{
-    console.log('keywords',keywords)
-    let action = {
-      type:'search',
-      value:{
-        keywords:keywords,
-      }
-    }
-    addressDispatch(action);
+    // console.log('keywords',keywords)
+    // let action = {
+    //   type:'search',
+    //   value:{
+    //     keywords:keywords,
+    //   }
+    // }
+    // addressDispatch(action);
   }
   const addressReducer = (prevState,action)=>{
     if(action.type=='initialize'){
@@ -207,12 +214,11 @@ function App() {
     //   }
     // }
     //localStorage.setItem('commanFunctions',JSON.stringify(commanFunctions));
-     fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ initialAddresses=res; addressDispatch({
-      type: 'initialize',
-      value: res
-    })});
-  },[])
-  const [addresses,addressDispatch] = useReducer(addressReducer,[]);
+     fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ initialAddresses=res;
+      addressDispatch(addressActions.initialize({initialAddresses:res}))
+    })},[]);
+  
+  //const [addresses,addressDispatch] = useReducer(addressReducer,[]);
 
   useEffect(()=>{
     
