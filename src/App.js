@@ -111,109 +111,97 @@ const addressDispatch = useDispatch();
     // }
     // addressDispatch(action);
   }
-  const addressReducer = (prevState,action)=>{
-    if(action.type=='initialize'){
-      console.log(prevState)
-      console.log('action value = ',action.value)
-      return action.value;
-    }
-    if(action.type=='add'){
-      let lastArray = [...prevState];
-      console.log('prevState = ',prevState);
-      console.log('action value',action.value);
+  // const addressReducer = (prevState,action)=>{
+  //   if(action.type=='initialize'){
+  //     console.log(prevState)
+  //     console.log('action value = ',action.value)
+  //     return action.value;
+  //   }
+  //   if(action.type=='add'){
+  //     let lastArray = [...prevState];
+  //     console.log('prevState = ',prevState);
+  //     console.log('action value',action.value);
 
-      lastArray.push(action.value);
-      console.log('la',lastArray);
-      return lastArray;
+  //     lastArray.push(action.value);
+  //     console.log('la',lastArray);
+  //     return lastArray;
       
      
       
-    }
-    if(action.type=='remove'){
-      let lastArray = [...prevState];
-      let index = lastArray.findIndex(item=>{
-        return item.id == action.value.id;
-      });
-      lastArray.splice(index,1);
+  //   }
+  //   if(action.type=='remove'){
+  //     let lastArray = [...prevState];
+  //     let index = lastArray.findIndex(item=>{
+  //       return item.id == action.value.id;
+  //     });
+  //     lastArray.splice(index,1);
        
-      return lastArray;
-    }
-    if(action.type=='edit'){
-      let lastArray = [...prevState];
-      let currentAddress = lastArray.find(item=>{
-        return item.id == action.value.id;
-      })
-      let index = lastArray.findIndex(item=>{
-        return item.id==action.value.id; 
-      })
-      currentAddress = {...action.value};
-      lastArray.splice(index,1,currentAddress);
+  //     return lastArray;
+  //   }
+  //   if(action.type=='edit'){
+  //     let lastArray = [...prevState];
+  //     let currentAddress = lastArray.find(item=>{
+  //       return item.id == action.value.id;
+  //     })
+  //     let index = lastArray.findIndex(item=>{
+  //       return item.id==action.value.id; 
+  //     })
+  //     currentAddress = {...action.value};
+  //     lastArray.splice(index,1,currentAddress);
       
-      return lastArray;
-    }
-    if(action.type=='dl'){
-      console.log('in action dl')
-      let lastArray = [...prevState];
-      lastArray.sort((a,b)=>{
-        return b.date - a.date;
-      })
-      return lastArray;
-    }
-    if(action.type=='do'){
-      let lastArray = [...prevState];
-      lastArray.sort((a,b)=>{
-        return a.date - b.date;
-      })
-      return lastArray;
-    }
-    if(action.type=='a-z'){
-      let lastArray = [...prevState];
+  //     return lastArray;
+  //   }
+  //   if(action.type=='dl'){
+  //     console.log('in action dl')
+  //     let lastArray = [...prevState];
+  //     lastArray.sort((a,b)=>{
+  //       return b.date - a.date;
+  //     })
+  //     return lastArray;
+  //   }
+  //   if(action.type=='do'){
+  //     let lastArray = [...prevState];
+  //     lastArray.sort((a,b)=>{
+  //       return a.date - b.date;
+  //     })
+  //     return lastArray;
+  //   }
+  //   if(action.type=='a-z'){
+  //     let lastArray = [...prevState];
       
-      lastArray.sort((a,b)=>{
-        return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-      })
-      return lastArray;
-    }
-    if(action.type=='z-a'){
-      let lastArray = [...prevState];
+  //     lastArray.sort((a,b)=>{
+  //       return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  //     })
+  //     return lastArray;
+  //   }
+  //   if(action.type=='z-a'){
+  //     let lastArray = [...prevState];
       
-      lastArray.sort((a,b)=>{
-        return b.name.toLowerCase().localeCompare(a.name.toLowerCase())
-      })
-      return lastArray;
-    }
-    if(action.type=='search'){
-      let keyWords = action.value.keyWords;
-      console.log('initial = ',initialAddresses);
-      let lastArray = initialAddresses;
-      lastArray = lastArray.filter((item)=>{
-        let itemKeys = item.name.split(' ');
-        // let commonFunctions = JSON.parse(localStorage.getItem('commonFunctions'));
-        itemKeys = commonFunctions.sanatizeWords(itemKeys);
-        for(let i=0;i<keyWords.length;i++){
-          if(itemKeys.includes(keyWords[i]))
-            return item;
-        }
-      })
-      return lastArray;
-    }
-  }
+  //     lastArray.sort((a,b)=>{
+  //       return b.name.toLowerCase().localeCompare(a.name.toLowerCase())
+  //     })
+  //     return lastArray;
+  //   }
+  //   if(action.type=='search'){
+  //     let keyWords = action.value.keyWords;
+  //     console.log('initial = ',initialAddresses);
+  //     let lastArray = initialAddresses;
+  //     lastArray = lastArray.filter((item)=>{
+  //       let itemKeys = item.name.split(' ');
+  //       // let commonFunctions = JSON.parse(localStorage.getItem('commonFunctions'));
+  //       itemKeys = commonFunctions.sanatizeWords(itemKeys);
+  //       for(let i=0;i<keyWords.length;i++){
+  //         if(itemKeys.includes(keyWords[i]))
+  //           return item;
+  //       }
+  //     })
+  //     return lastArray;
+  //   }
+  // }
   
   // let myAddresses = []
   useEffect(()=>{
-    // const commanFunctions = {
-    //   sanatizeWords: (words)=>{
-    //     words = words.map((word)=>{
-    //       return word.trim();
-    //     })
-    //     words = words.map((word=>{
-    //       return word.search(/\W/g);
-    //     }))
-    //     return words;
-
-    //   }
-    // }
-    //localStorage.setItem('commanFunctions',JSON.stringify(commanFunctions));
+    
      fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ initialAddresses=res;
       addressDispatch(addressActions.initialize({initialAddresses:res}))
     })},[]);
