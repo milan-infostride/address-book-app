@@ -1,7 +1,7 @@
 {
   "addresses": [
     {
-      "name": "edited",
+      "name": "edited again",
       "building_location": "ansnk ljslwnjd lwjldwj",
       "city": "ljljl",
       "state": "Punjab",
@@ -9,28 +9,12 @@
       "id": 1
     },
     {
-      "name": "bharat",
-      "building_location": "ansnk ljslwnjd lwjldwj",
-      "city": "ljljl",
-      "state": "Himachal Pardesh",
-      "date": 1658347962752,
-      "id": 3
-    },
-    {
-      "name": "saransh",
+      "name": "saransh edited",
       "building_location": "wewe",
       "city": "mohali",
       "state": "Haryana",
       "date": 1658349576176,
       "id": 5
-    },
-    {
-      "name": "test 2",
-      "building_location": "oiju9i",
-      "city": "iojoiu",
-      "state": "Punjab",
-      "date": 1658413810255,
-      "id": 8
     },
     {
       "name": "xyz",
@@ -71,14 +55,6 @@
       "state": "Haryana",
       "date": 1658785142501,
       "id": 14
-    },
-    {
-      "name": "aaa",
-      "building_location": "sdwsxdc",
-      "city": "Chandigarh",
-      "state": "Haryana",
-      "date": 1658785995549,
-      "id": 15
     }
   ],
   "users": []

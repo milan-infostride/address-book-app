@@ -18,7 +18,9 @@ const AddressCard = (props) => {
     const openEditModal = ()=>{
         
         seteditModalState(true);
+        modalRef.current.setWidth();
     };
+    let modalRef = useRef();
 
     
     return ( 
@@ -56,7 +58,7 @@ const AddressCard = (props) => {
                 <Button variant='contained' startIcon={<DeleteIcon />} size='small' color='error' onClick={()=>{props.deleteHandler(props.address.id)}}>Delete</Button>
                 <Button variant='contained' sx={{ml:2}} startIcon={<EditIcon />} size='small' color='secondary' onClick={()=>{openEditModal()}}>Edit</Button>
             </CardActions>
-            <EditAddressModal editAddressHandler = {props.editAddressHandler} initialState={props.address} openEditModal={openEditModal} closeEditModal={closeEditModal} editModalState={editModalState} />
+            <EditAddressModal ref={modalRef} editAddressHandler = {props.editAddressHandler} initialState={props.address} openEditModal={openEditModal} closeEditModal={closeEditModal} editModalState={editModalState} />
       </Card>
      );
 }

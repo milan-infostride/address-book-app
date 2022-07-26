@@ -2,14 +2,30 @@ import { Avatar, Button, Card, CardActions, CardContent, CardHeader, FormControl
 import { purple } from "@mui/material/colors";
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useReducer, useState } from "react";
+import { forwardRef, useEffect, useReducer, useState } from "react";
 import { useRef } from "react";
 import { textAlign } from "@mui/system";
+import { useImperativeHandle } from "react";
 
-const EditAddressModal = (props) => {
+const EditAddressModal = forwardRef((props,ref) => {
+    let textRef = useRef();
+    const [textWidth,setTextWidth] = useState('');
+    const setWidth = ()=>{
+        setTimeout(()=>{
+            // console.log('textRef = ',textRef)
+            setTextWidth(textRef.current.clientWidth);
+
+        },500)
+    }
+    useImperativeHandle(ref,()=>{
+        return {
+            setWidth
+        }
+    })    
+    
     let theme = useTheme();
     let isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-    let textRef = useRef();
+    
     const states = ['Punjab','Haryana','Himachal Pardesh','Mharashtra']
 
     const addFormInputsReducer = (prevState,action)=>{
@@ -67,15 +83,16 @@ const EditAddressModal = (props) => {
                 />
                 <CardContent>
                     <Grid container sx={{justifyContent:'center'}}>
-                    <Grid item mb={2}><TextField id='name' label='Name' size='small' onChange={(e)=>{ fieldChangeHandler(e,'name')}} color='secondary' value={addFormInputs.name}  ref={textRef}></TextField></Grid>
+                    <Grid item mb={2}><TextField id='name' label='Name' size='small' onChange={(e)=>{ fieldChangeHandler(e,'name')}} color='secondary' value={addFormInputs.name}  ></TextField></Grid>
 
-                        <Grid item mb={2}><TextField multiline //sx={{width: textWidth}} 
+                        <Grid item mb={2}><TextField multiline sx={{width: textWidth}} 
                         onChange={(e)=>{ fieldChangeHandler(e,'building_location')}} value={addFormInputs.building_location}   rows={3} id='bl' label='Building &#38; Location' variant="outlined"  color='secondary' size='small'></TextField></Grid>
                         <Grid item mb={2}><TextField id='city' label='City' size='small' onChange={(e)=>{ fieldChangeHandler(e,'city')}} color='secondary' value={addFormInputs.city}  ref={textRef}></TextField></Grid>
                         <Grid item mb={2}>
                             <FormControl color='secondary' size="small" variant="filled" sx={{ minWidth: 160 }}>
                                 <InputLabel size="small" id="demo-simple-select-filled-label">State</InputLabel>
                                 <Select
+                                    sx={{ minWidth: 120 , width: textWidth}}
                                     size='small'
                                     labelId="demo-simple-select-filled-label"
                                     id="demo-simple-select-filled"
@@ -104,6 +121,6 @@ const EditAddressModal = (props) => {
             
         </Modal>
      );
-}
+})
  
 export default EditAddressModal;

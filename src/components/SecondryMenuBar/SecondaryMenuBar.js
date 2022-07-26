@@ -171,7 +171,8 @@ const SecondaryMenuBar = (props) => {
     useEffect(()=>{
         setIsFormValid(!(name.isValid && building_location.isValid && city.isValid && state.isValid))
 
-    },[name.isValid,building_location.isValid,city.isValid,state.isValid]) 
+    },[name.isValid,building_location.isValid,city.isValid,state.isValid])
+     
     const addClicked = (sortType)=>{
         let newAddress = {
             name: name.inputValue,
@@ -224,18 +225,22 @@ const SecondaryMenuBar = (props) => {
     const search= (e)=>{
         // console.log(e.keyCode);
         // searchText.inputValueChanged(e)
+        
         if(e.keyCode==13&&searchText.isValid){
             
             console.log(e.target.value);
-            let keyWords = commanFunctions.sanatizeWords(e.target.value.split(' '));
-            // console.log('keys'=keyWords);
-            let action = {
-                type: 'search',
-                value: {
-                    keyWords: keyWords
-                }
-            }
-            props.addressDispatch(action)
+            // let keyWords = commanFunctions.sanatizeWords(e.target.value.split(' '));
+            // // console.log('keys'=keyWords);
+            // let action = {
+            //     type: 'search',
+            //     value: {
+            //         keyWords: keyWords
+            //     }
+            // }
+            // props.addressDispatch(action)
+            props.setSearchString(e.target.value)
+            props.searchAddressesHandler(e.target.value);
+            
         }
     }
     

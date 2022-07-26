@@ -3,12 +3,15 @@ import './App.css';
 import Navbar from './components/navbar/Navbar';
 import SecondaryMenuBar from './components/SecondryMenuBar/SecondaryMenuBar';
 import MyClassComponent from './components/MyClassComponent';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import AddressCard from './components/ListingAdresses/AddressCard';
 import AddressList from './components/ListingAdresses/AddressList';
 import commonFunctions from './components/commanFunctions';
 import { useSelector, useDispatch } from 'react-redux';
 import { addressActions } from './Stores/slices/adderesses-slice';
+import commanFunctions from './components/commanFunctions';
+import { Route } from 'react-router-dom';
+import Login from './components/pages/Login'
 var initialAddresses = [];
 
 
@@ -101,16 +104,8 @@ const addressDispatch = useDispatch();
       });
 
   }
-  const searchHandler = (keywords)=>{
-    // console.log('keywords',keywords)
-    // let action = {
-    //   type:'search',
-    //   value:{
-    //     keywords:keywords,
-    //   }
-    // }
-    // addressDispatch(action);
-  }
+  const [searchString,setSearchString] = useState('');
+  // const [seachClicked,setSearchClicked] = useState(false);
   // const addressReducer = (prevState,action)=>{
   //   if(action.type=='initialize'){
   //     console.log(prevState)
@@ -207,17 +202,42 @@ const addressDispatch = useDispatch();
     })},[]);
   
   //const [addresses,addressDispatch] = useReducer(addressReducer,[]);
+  const searchAddressesHandler = (str)=>{
+    let keyWords = str.split(' ');
+    keyWords = commanFunctions.sanatizeWords(keyWords);
+    let searchedResult = []
+    keyWords.forEach((keyWord)=>{
+       searchedResult= addresses.filter((item)=>{
+        let addressKeyWords = item.name.split(' ');
+        addressKeyWords = commanFunctions.sanatizeWords(addressKeyWords);
+        return addressKeyWords.includes(keyWord);
+      })
+    })
 
+    setSearchAddresses(searchedResult);
+
+}
   useEffect(()=>{
     
     console.log('adresses = ',addresses);
+    if(searchString.length>0){
+      searchAddressesHandler(searchString)
+    }
+    
   },[addresses])
+  const [searchAddresses,setSearchAddresses] = useState([]);
+ 
   
   return (
     <>
       <Navbar />
-      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} searchHandler={searchHandler} addressDispatch={addressDispatch} />
-      <AddressList addresses={addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler} />
+      <Route path='/main'>
+      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} searchAddressesHandler={searchAddressesHandler} setSearchString={setSearchString} addressDispatch={addressDispatch} />
+      <AddressList addresses={searchAddresses.length>0?searchAddresses:addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler}  />
+      </Route>
+      <Route path='/login'>
+        <Login></Login>
+      </Route>
     </>
   );
 }
