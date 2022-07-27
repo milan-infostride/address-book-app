@@ -1,61 +1,99 @@
 {
   "addresses": [
     {
-      "name": "edited again",
-      "building_location": "ansnk ljslwnjd lwjldwj",
-      "city": "ljljl",
+      "name": "milan",
+      "building_location": "ded",
+      "city": "ede",
       "state": "Punjab",
-      "date": 1658347948184,
+      "date": 1658958641936,
+      "uid": 1,
       "id": 1
     },
     {
-      "name": "saransh edited",
-      "building_location": "wewe",
-      "city": "mohali",
+      "name": "saransh",
+      "building_location": "rfrf",
+      "city": "rfrf",
       "state": "Haryana",
-      "date": 1658349576176,
+      "date": 1658958979659,
+      "uid": 4,
+      "id": 2
+    },
+    {
+      "name": "abcd",
+      "building_location": "adsasfds",
+      "city": "etret",
+      "state": "Punjab",
+      "date": 1658959897712,
+      "uid": 5,
+      "id": 3
+    },
+    {
+      "name": "asda",
+      "building_location": "asdasd",
+      "city": "asdasd",
+      "state": "Haryana",
+      "date": 1658960005814,
+      "uid": 5,
+      "id": 4
+    },
+    {
+      "name": "njkn",
+      "building_location": "sxs",
+      "city": "xsxs",
+      "state": "Haryana",
+      "date": 1658960814289,
+      "uid": 5,
       "id": 5
     },
     {
       "name": "xyz",
-      "building_location": "fef",
-      "city": "effe",
-      "state": "Haryana",
-      "date": 1658414634193,
-      "id": 10
+      "building_location": "jkkljjl",
+      "city": "kjlj",
+      "state": "Punjab",
+      "date": 1658961043533,
+      "uid": 5,
+      "id": 6
     },
     {
-      "name": "zzzz",
-      "building_location": "grrg",
-      "city": "grg",
+      "name": "mmm",
+      "building_location": "dcdcd",
+      "city": "cdc",
       "state": "Haryana",
-      "date": 1658414680165,
-      "id": 11
-    },
-    {
-      "name": "custom hook validaiton",
-      "building_location": "rjglgjlrt",
-      "city": "rfrf",
-      "state": "Haryana",
-      "date": 1658517697677,
-      "id": 12
-    },
-    {
-      "name": "milan final",
-      "building_location": "dcxdc",
-      "city": "dwd",
-      "state": "Haryana",
-      "date": 1658784884250,
-      "id": 13
-    },
-    {
-      "name": "cxdcd",
-      "building_location": "dcdc",
-      "city": "dcdc",
-      "state": "Haryana",
-      "date": 1658785142501,
-      "id": 14
+      "date": 1658961062205,
+      "uid": 5,
+      "id": 7
     }
   ],
-  "users": []
+  "users": [
+    {
+      "fullName": "milandeep singh bhalla",
+      "email": "milansinghdav@gmail.com",
+      "password": "Milansingh@1",
+      "id": 1
+    },
+    {
+      "fullName": "rfrf",
+      "email": "milansongh@gma.co",
+      "password": "milan1234@",
+      "id": 2
+    },
+    {
+      "fullName": "test user 1",
+      "email": "testuser1@gmail.com",
+      "password": "Testuser@1",
+      "id": 3
+    },
+    {
+      "fullName": "test saransh",
+      "email": "testsaransh@gmail.com",
+      "password": "Testsaransh@1",
+      "id": 4
+    },
+    {
+      "fullName": "saransh",
+      "email": "saransh@gmail.com",
+      "password": "Saransh@1",
+      "id": 5
+    }
+  ]
 }

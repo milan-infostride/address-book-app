@@ -4,18 +4,16 @@ import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
 import useFormInput from "../../hooks/use-FormInput";
 import { useState } from "react";
-import { Visibility } from "@mui/icons-material";
+import { FeaturedPlayList, Visibility } from "@mui/icons-material";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { currentUserActions } from "../../Stores/slices/current-user-slice";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AbcIcon from '@mui/icons-material/Abc';
+import { current } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
-// /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/ -- Minimum eight characters, at least one letter, one number and one special character
-const Login = () => {
-    useEffect(()=>{
-        if(currentUser.id!=-1)
-            history.replace('/main');
-    },[])
-    const history = useHistory();
+
+
+
+const Signup = () => {
     const [currentMessage,setCurrentMessage] = useState('');
     const [currentSeverity,setCurrentSeverity] = useState('');
     const [alertOpen,setAlertOpen] = useState(false);
@@ -31,6 +29,8 @@ const Login = () => {
     
         setAlertOpen(false);
     };
+    const history = useHistory();
+
     const passwordValidator = (str)=>{
         console.log('str = ',str)
         if(str.match(/\s/g)){
@@ -79,14 +79,72 @@ const Login = () => {
             }
         }
     }
+    const requiredValidator = (data)=>{
+        if(data.trim()===''){
+            return {
+                valid: false,
+                helperData: 'Field is required'
+            }
+        }
+        else{
+            return{
+                valid: true,
+                helperData: ''
+            }
+        }
+    }
+    const confirmPasswordValidator = (str)=>{
+        if(str.trim()===''){
+            return {
+                valid: false,
+                helperData: 'Field is Required'
+            }
+        }
+        if(str!==password.inputValue){
+            return {
+                valid: false,
+                helperData: 'Didn\'t matched with password'
+            }
+        }
+        else{
+            return {
+                valid: true,
+                helperData: ''
+            }
+        }
+    }
+    const [showConfirmPassword,setShowConfirmPassword] = useState(false);
+    const showConfirmPasswordHandler = ()=>{
+        setShowConfirmPassword((prevSate)=>{
+            let old  = prevSate;
+            return !old;
+        })
+    }
     const password = useFormInput(passwordValidator,'');
     const email = useFormInput(emailValidator,'');
+    const fullName = useFormInput(requiredValidator,'');
+    const confirmPassword = useFormInput(confirmPasswordValidator,'');
     let listColor = grey[400];
     const [isFormValid,setIsFormValid] = useState(false)
-    useEffect(()=>{console.log(password.isValid,email.isValid);setIsFormValid(password.isValid && email.isValid);},[password.isValid,email.isValid])
-    const currentUser = useSelector(state=> state.currentUser.currentUser)
-    const currentUserDispatch = useDispatch();
-    const loginHandler = async()=>{
+    useEffect(()=>{
+        console.log(password.isValid,email.isValid);
+        setIsFormValid(password.isValid && email.isValid && fullName.isValid && confirmPassword.isValid);
+    },[password.isValid,email.isValid,confirmPassword.isValid,fullName.isValid])
+
+    const signupHandler = async(e)=>{
+        e.preventDefault();
+        let newObj = {
+            fullName:fullName.inputValue,
+            email:email.inputValue,
+            password:password.inputValue,
+        }
+        let requestConfig = {
+            method: 'Post',
+            body: JSON.stringify(newObj),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        }
         let emailData = [];
         let gotEmailData = false;
          let emailResponse = await fetch('http://localhost:3000/users?email='+email.inputValue)
@@ -103,44 +161,76 @@ const Login = () => {
          }
          if(gotEmailData){
             if(emailData.length==0){
-                alertHandler('warning','No user with that email..!!')
+                fetch('http://localhost:3000/users',requestConfig).then(res=>{
+                if(!res.ok){
+                    alertHandler('error','Server Error...!!')
+
+                }
+                else
+                    return res.json()
+                }).then(res=>{
+                    console.log('result = ', res);
+                    //alert('signed up')
+                    alertHandler('success','Signed Up...!!')
+                    history.replace('/login');
+
+                })
             }
             else{
-                let user = emailData[0];
-                if(user.password == password.inputValue){
-                    delete user.password
-                    localStorage.setItem('currentUser',JSON.stringify(user));
-                    currentUserDispatch(currentUserActions.setCurrentUser({currentUser: user}))
-                    alertHandler('success','Logged In...!!');
-                    history.replace('/main');
-                    window.location.reload();
-                    
-                }
-                else{
-                    alertHandler('error','Wrong Password...!!')
-                }
-            }
+                alertHandler('error','That email is taken..!!')
 
-         }
+        }   
+            
+        
 
     }
-
+}
+    
+      
     return ( 
-        <Grid container sx={{justifyContent: 'center',p:0,minHeight:'80vh',alignItems:'center'}}>
+        <Grid container sx={{justifyContent: 'center',p:0,minHeight:'100vh',alignItems:'center'}}>
             <Snackbar anchorOrigin={{vertical:'top',horizontal:'right'}} open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
                 <Alert severity={currentSeverity} >
                     {currentMessage}
                 </Alert>
             </Snackbar>
-            <Grid  item xs={11} md={7} sx={{backgroundColor: listColor,height:'fit-content'}}>
+            <Grid  item xs={11} md={7} sx={{backgroundColor: listColor,height:'fit-content',mb:4}}>
                 <Grid container sx={{justifyContent: 'center',pt:3}}>
-                    <LockIcon color="secondary" sx={{fontSize:'5em'}}></LockIcon>
+                    <AccountCircleIcon color="secondary" sx={{fontSize:'5em'}}></AccountCircleIcon>
                     
                 </Grid>
                 <Grid container sx={{justifyContent: 'center'}}>
-                    <Typography color='secondary' sx={{fontSize:'1.8em',lineHeight: '1em'}}>Login</Typography>
+                    <Typography color='secondary' sx={{fontSize:'1.8em',lineHeight: '1em'}}>Sign Up</Typography>
                 </Grid>
                 <Grid container sx={{justifyContent: 'center' , mt:2}}>
+                    <Grid item xs={9} md={7} sx={{display:'flex',justifyContent:'center'}}>
+                        <FormControl fullWidth size='small' sx={{ m: 1 }} color='secondary' variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-fullName">Full Name</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-fullName"
+                                type='text'
+                                value={fullName.inputValue}
+                                onChange={(e)=>{fullName.inputValueChanged(e)}}
+                                onBlur={(e)=>{fullName.inputValueBlur(e)}}
+                                error={fullName.hasError}
+                                helperText={fullName.helperText}
+                                startAdornment={
+                                <InputAdornment position="start">
+                                    {/* <IconButton
+                                    aria-label="toggle password visibility"
+                                    //onClick={()=>{showPasswordHandler()}}
+                                    //onMouseDown={handleMouseDownPassword}
+                                    edge="start"
+                                    > */}
+                                    <AbcIcon color='secondary' />
+                                    {/* /</IconButton> */}
+                                </InputAdornment>
+                                }
+                                label="Full Name"
+                            />
+                            <FormHelperText sx={{fontSize:'0.6em'}} error={fullName.hasError}>{fullName.helperText}</FormHelperText>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={9} md={7} sx={{display:'flex',justifyContent:'center'}}>
                         <FormControl fullWidth size='small' sx={{ m: 1 }} color='secondary' variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
@@ -197,8 +287,37 @@ const Login = () => {
                         <FormHelperText sx={{fontSize:'0.6em'}} error={password.hasError}>{password.helperText}</FormHelperText>
                     </FormControl>
                     </Grid>
+                   
+                    <Grid item xs={9} md={7} sx={{display:'flex',justifyContent:'center'}}>
+                        <FormControl fullWidth size='small' sx={{ m: 1 }} color='secondary' variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-password">Confirm Password</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-confirmPassword"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                value={confirmPassword.inputValue}
+                                onChange={(e)=>{confirmPassword.inputValueChanged(e)}}
+                                onBlur={(e)=>{confirmPassword.inputValueBlur(e)}}
+                                error={confirmPassword.hasError}
+                                helperText={confirmPassword.helperText}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={()=>{showConfirmPasswordHandler()}}
+                                    //onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                    >
+                                    <Visibility color='secondary' />
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                                label="Confirm Password"
+                            />
+                            <FormHelperText sx={{fontSize:'0.6em'}} error={confirmPassword.hasError}>{confirmPassword.helperText}</FormHelperText>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={9} md={7} sx={{display: 'flex',justifyContent: 'center', my:2}}>
-                        <Button disabled={!isFormValid} color='secondary' onClick={loginHandler} variant="contained" sx={{width:'15ch'}}>Login</Button>
+                        <Button disabled={!isFormValid} color='secondary' variant="contained" onClick={(e)=>{signupHandler(e)}} sx={{width:'15ch'}}>Sign Up</Button>
                     </Grid>
                 </Grid>
             </Grid>
@@ -206,4 +325,4 @@ const Login = () => {
      );
 }
  
-export default Login;
+export default Signup;

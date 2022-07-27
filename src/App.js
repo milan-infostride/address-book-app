@@ -10,13 +10,16 @@ import commonFunctions from './components/commanFunctions';
 import { useSelector, useDispatch } from 'react-redux';
 import { addressActions } from './Stores/slices/adderesses-slice';
 import commanFunctions from './components/commanFunctions';
-import { Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import Login from './components/pages/Login'
+import Signup from './components/pages/Signup';
+import { currentUserActions } from './Stores/slices/current-user-slice';
 var initialAddresses = [];
 
 
 
 function App() {
+  const currentUser = useSelector(state=>state.currentUser.currentUser)
   const addresses = useSelector(state=> state.addresses.addresses)
 const addressDispatch = useDispatch();
 
@@ -44,6 +47,7 @@ const addressDispatch = useDispatch();
       type:'add',
       //value: {}
     };
+    newAddress.uid = currentUser.id;
      fetch('http://localhost:3000/addresses/',{
       method: 'POST',
       body: JSON.stringify(newAddress),
@@ -61,6 +65,10 @@ const addressDispatch = useDispatch();
       if(sortType.length>0){
         let actionSort = {type:sortType}
         addressDispatch(addressActions.sortAddresses({sortType:sortType}))
+      }
+      if(searchString.length>0){
+
+        window.location.reload();
       }
     })
     
@@ -196,10 +204,16 @@ const addressDispatch = useDispatch();
   
   // let myAddresses = []
   useEffect(()=>{
-    
-     fetch('http://localhost:3000/addresses').then(res=>{return res.json()}).then(res=>{ initialAddresses=res;
+
+    if(localStorage.getItem('currentUser')){
+      let user = JSON.parse(localStorage.getItem('currentUser'));
+      addressDispatch(currentUserActions.setCurrentUser({currentUser:user}));
+      fetch('http://localhost:3000/addresses?uid='+user.id).then(res=>{return res.json()}).then(res=>{ initialAddresses=res;
       addressDispatch(addressActions.initialize({initialAddresses:res}))
-    })},[]);
+      })
+    }
+    
+     },[]);
   
   //const [addresses,addressDispatch] = useReducer(addressReducer,[]);
   const searchAddressesHandler = (str)=>{
@@ -231,12 +245,21 @@ const addressDispatch = useDispatch();
   return (
     <>
       <Navbar />
+      <Route path='/' exact>
+        <Redirect to='/login'></Redirect>
+      </Route>
       <Route path='/main'>
-      <SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} searchAddressesHandler={searchAddressesHandler} setSearchString={setSearchString} addressDispatch={addressDispatch} />
-      <AddressList addresses={searchAddresses.length>0?searchAddresses:addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler}  />
+        { currentUser.id!=-1 &&
+        <><SecondaryMenuBar addresses={addresses} addAdressHandler={addAdressHandler} searchAddressesHandler={searchAddressesHandler} setSearchString={setSearchString} addressDispatch={addressDispatch} />
+        
+        <AddressList addresses={searchAddresses.length>0?searchAddresses:addresses} editAddressHandler={editAddressHandler} deleteHandler={deleteHandler}  /></>
+        }
       </Route>
       <Route path='/login'>
         <Login></Login>
+      </Route>
+      <Route path='/signup'>
+        <Signup></Signup>
       </Route>
     </>
   );

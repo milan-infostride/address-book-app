@@ -13,6 +13,9 @@ import { grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import './mylist.css'
 import { useRef } from "react";
+import { currentUserActions } from "../../Stores/slices/current-user-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
 
 
 
@@ -49,6 +52,16 @@ const Navbar = () => {
         backgroundColor: listbg
       }
     }))
+   
+    const currentUser = useSelector(state=> state.currentUser.currentUser)
+    console.log('cu = ',currentUser)
+    const currentUserDispatch = useDispatch();
+    const logoutHandler = ()=>{
+      localStorage.removeItem('currentUser');
+      currentUserDispatch(currentUserActions.logout());
+      window.location.reload();
+    }
+    
     return ( 
       <>
         <Grid container  sx={{
@@ -59,7 +72,7 @@ const Navbar = () => {
             mb: !isDesktop?0:2
         }}>
           <Grid item sx={{display: 'flex-item',alignSelf: 'center',flexGrow:1, ml: 1}}>
-            <HomeTwoToneIcon  sx={{
+            <HomeTwoToneIcon   sx={{
                 fontSize: '1.7em'
             }}></HomeTwoToneIcon>
             <Typography 
@@ -72,14 +85,15 @@ const Navbar = () => {
                 Address Book  
             </Typography>
           </Grid>
+          { isDesktop &&
           <Grid sx={{display:'flex',alignItems:'center',mx:2}}>
             <Link href='#' underline='none' sx={{display:'flex',alignItems:'center' ,color:'#fff'}}>
             <Grid item sx={{display: 'flex-item'}}>
                 <AccountCircleIcon sx={{mt: 0.5}} />
             </Grid>
-            <Grid Item sx={{display: 'flex-item',ml:0.3}}>Hello User</Grid>
+            <Grid Item sx={{display: 'flex-item',ml:0.3}}>Hello {currentUser.fullName.split(' ')[0]}</Grid>
             </Link>
-            { isDesktop &&
+            {currentUser.id==-1 &&
             <LoginButton ref={myButton} size='small' sx={{ml:1,backgroundColor:listbg,color:'#fff'}} variant="contained" endIcon={<ArrowDropDownIcon />} startIcon={<LockIcon />}
               onClick={(e)=>{
                 let pos = myButton.current.getBoundingClientRect();
@@ -94,8 +108,13 @@ const Navbar = () => {
               
             </LoginButton>
             }
+            {currentUser.id!=-1 &&
+              <LoginButton  variant='contained' sx={{ml:1,backgroundColor:listbg,color:'#fff'}} size='small' onClick={()=>{logoutHandler()}}>Logout</LoginButton>
+
+            }
             
           </Grid>
+            }
           
           {!isDesktop &&<Grid item sx={{ml:'auto',display:'flex-item',mr:1}}>
             <MenuIcon onClick={()=>{toggleDrawer()}} />
@@ -123,9 +142,9 @@ const Navbar = () => {
                 </ListItem>
               </List> */}
               <div style={{backgroundColor: listbg,color:'#fff',fontSize:'0.9em'}}>
-                <div style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><VpnKeyIcon/> <span style={{paddingLeft:'0.6em'}}>Login</span></div>
+                <div onClick={()=>{setMobLoginOpen(false)}} style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><VpnKeyIcon/> <span style={{paddingLeft:'0.6em'}}><RouterLink style={{textDecoration:'none',color:'#fff'}} to='/login'>Login</RouterLink></span></div>
                 <Divider/>
-                <div style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><PersonIcon/> <span style={{paddingLeft:'0.6em'}}>Signup</span></div>
+                <div onClick={()=>{setMobLoginOpen(false)}} style={{padding: '0.5em',paddingLeft:'1em', display:'flex', alignItems:'center'}}><PersonIcon/> <span style={{paddingLeft:'0.6em'}}><RouterLink style={{textDecoration:'none',color:'#fff'}} to='/signup'>Signup</RouterLink></span></div>
               </div>
         </Collapse>
         <Collapse in={topOpen} sx={{backgroundColor: listbg, color:'#fff'}}>
@@ -139,15 +158,19 @@ const Navbar = () => {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
+              {currentUser.id==-1 &&
               <ListItemButton>
                 <ListItemIcon sx={{justifyContent: 'end'}}>
                   <LockIcon sx={iconsx} />
                 </ListItemIcon>
                 <ListItemText onClick={()=>{loginToggler()}} primary={<Grid container sx={{alignItems: 'center'}}><Grid item sx={{display: 'flex-item'}}>Login/SignUp</Grid><Grid item sx={{display: 'flex-item', mt:0.5}}><ArrowDropDownIcon sx={{color: '#fff'}} /></Grid></Grid>} />
-                {/* <ListItemIcon>
-                  
-                </ListItemIcon> */}
+               
               </ListItemButton>
+              }
+              {/* {currentUser.id !=-1 && */}
+                {/* <Button color='secondary' sx={{ml:'3.7em',mt:0.7,mb:1.3}} variant="contained" size='small' onClick={()=>{logoutHandler}}>Logout</Button> */}
+
+              {/* } */}
             </ListItem>
             <Collapse in={loginOpen}>
               <List sx={{pl:1.5}}>
@@ -167,7 +190,9 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Sigup" />
                   </ListItemButton>
+              
                 </ListItem>
+              
               </List>
             </Collapse>
           </List>

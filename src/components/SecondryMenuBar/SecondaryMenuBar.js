@@ -248,6 +248,7 @@ const SecondaryMenuBar = (props) => {
         <Grid container sx={{backgroundColor: listColor}} spacing={2}>
             <Grid item xs={6} md={3} sx={{display:'flex-item',py:2,alignItems:'middle',justifyContent:'center'}}>
                 <Button variant='contained' size='small' onClick={openAddModal} color="secondary" endIcon={<AddCircleIcon />}>Add</Button>
+                <Button variant='contained' size='small' color='secondary' sx={{ml:2}} onClick={()=>{window.location.reload()}}>Reset</Button>
             </Grid>
             <Grid item xs={6} md={3} sx={{display:'flex-item',py:2,alignItems:'middle',justifyContent:'center'}}>
                 <Search >
