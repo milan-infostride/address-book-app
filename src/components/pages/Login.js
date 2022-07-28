@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { currentUserActions } from "../../Stores/slices/current-user-slice";
 import { useHistory } from "react-router-dom";
+import { alertHandlerActions } from "../../Stores/slices/alert-handler-slice";
 // /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/ -- Minimum eight characters, at least one letter, one number and one special character
 const Login = () => {
     useEffect(()=>{
@@ -16,21 +17,8 @@ const Login = () => {
             history.replace('/main');
     },[])
     const history = useHistory();
-    const [currentMessage,setCurrentMessage] = useState('');
-    const [currentSeverity,setCurrentSeverity] = useState('');
-    const [alertOpen,setAlertOpen] = useState(false);
-    const alertHandler  =(severity,message)=>{
-        setCurrentMessage(message);
-        setCurrentSeverity(severity);
-        setAlertOpen(true);
-    }
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
     
-        setAlertOpen(false);
-    };
+    
     const passwordValidator = (str)=>{
         console.log('str = ',str)
         if(str.match(/\s/g)){
@@ -85,7 +73,15 @@ const Login = () => {
     const [isFormValid,setIsFormValid] = useState(false)
     useEffect(()=>{console.log(password.isValid,email.isValid);setIsFormValid(password.isValid && email.isValid);},[password.isValid,email.isValid])
     const currentUser = useSelector(state=> state.currentUser.currentUser)
+   
     const currentUserDispatch = useDispatch();
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+       
+        currentUserDispatch(alertHandlerActions.closeAlert());
+    };
     const loginHandler = async()=>{
         let emailData = [];
         let gotEmailData = false;
@@ -99,11 +95,14 @@ const Login = () => {
             // setCurrentMessage('Server Error');
             // setCurrentSeverity('error');
             // setAlertOpen(true);
-            alertHandler('error','Server Error...!!')
+            // alertHandler('error','Server Error...!!')
+            currentUserDispatch(alertHandlerActions.fireAlert({message:'Server Error',severety:'error'}))
          }
          if(gotEmailData){
             if(emailData.length==0){
-                alertHandler('warning','No user with that email..!!')
+                // alertHandler('warning','No user with that email..!!')
+                currentUserDispatch(alertHandlerActions.fireAlert({message:'No user with that email..!!',severety:'warning'}))
+
             }
             else{
                 let user = emailData[0];
@@ -111,13 +110,17 @@ const Login = () => {
                     delete user.password
                     localStorage.setItem('currentUser',JSON.stringify(user));
                     currentUserDispatch(currentUserActions.setCurrentUser({currentUser: user}))
-                    alertHandler('success','Logged In...!!');
+                    currentUserDispatch(alertHandlerActions.fireAlert({message:'Logged In...!!',severety:'success'}))
+
+                    // alertHandler('success','Logged In...!!');
                     history.replace('/main');
                     window.location.reload();
                     
                 }
                 else{
-                    alertHandler('error','Wrong Password...!!')
+                    currentUserDispatch(alertHandlerActions.fireAlert({message:'Wrong Password...!!',severety:'error'}))
+
+                    // alertHandler('error','Wrong Password...!!')
                 }
             }
 
@@ -127,11 +130,7 @@ const Login = () => {
 
     return ( 
         <Grid container sx={{justifyContent: 'center',p:0,minHeight:'80vh',alignItems:'center'}}>
-            <Snackbar anchorOrigin={{vertical:'top',horizontal:'right'}} open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
-                <Alert severity={currentSeverity} >
-                    {currentMessage}
-                </Alert>
-            </Snackbar>
+           
             <Grid  item xs={11} md={7} sx={{backgroundColor: listColor,height:'fit-content'}}>
                 <Grid container sx={{justifyContent: 'center',pt:3}}>
                     <LockIcon color="secondary" sx={{fontSize:'5em'}}></LockIcon>

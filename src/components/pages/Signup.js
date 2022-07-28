@@ -10,24 +10,20 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AbcIcon from '@mui/icons-material/Abc';
 import { current } from "@reduxjs/toolkit";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { alertHandlerActions } from "../../Stores/slices/alert-handler-slice";
 
 
 
 const Signup = () => {
-    const [currentMessage,setCurrentMessage] = useState('');
-    const [currentSeverity,setCurrentSeverity] = useState('');
-    const [alertOpen,setAlertOpen] = useState(false);
-    const alertHandler  =(severity,message)=>{
-        setCurrentMessage(message);
-        setCurrentSeverity(severity);
-        setAlertOpen(true);
-    }
+    const alertData = useSelector(state=>state.alertHandlerSlice);
+    const dispatch = useDispatch();
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
           return;
         }
     
-        setAlertOpen(false);
+        dispatch(alertHandlerActions.closeAlert());
     };
     const history = useHistory();
 
@@ -157,13 +153,15 @@ const Signup = () => {
             // setCurrentMessage('Server Error');
             // setCurrentSeverity('error');
             // setAlertOpen(true);
-            alertHandler('error','Server Error...!!')
+            // alertHandler('error','Server Error...!!')
+            dispatch(alertHandlerActions.fireAlert({message:'Server Error...!!',severety:'error'}))
          }
          if(gotEmailData){
             if(emailData.length==0){
                 fetch('http://localhost:3000/users',requestConfig).then(res=>{
                 if(!res.ok){
-                    alertHandler('error','Server Error...!!')
+                    // alertHandler('error','Server Error...!!')
+                    dispatch(alertHandlerActions.fireAlert({message:'Server Error...!!',severety:'error'}))
 
                 }
                 else
@@ -171,13 +169,15 @@ const Signup = () => {
                 }).then(res=>{
                     console.log('result = ', res);
                     //alert('signed up')
-                    alertHandler('success','Signed Up...!!')
+                    // alertHandler('success','Signed Up...!!')
+                    dispatch(alertHandlerActions.fireAlert({message:'Signed Up...!!',severety:'success'}))
                     history.replace('/login');
 
                 })
             }
             else{
-                alertHandler('error','That email is taken..!!')
+                // alertHandler('error','That email is taken..!!')
+                dispatch(alertHandlerActions.fireAlert({message:'That email is taken..!!',severety:'error'}))
 
         }   
             
@@ -189,11 +189,7 @@ const Signup = () => {
       
     return ( 
         <Grid container sx={{justifyContent: 'center',p:0,minHeight:'100vh',alignItems:'center'}}>
-            <Snackbar anchorOrigin={{vertical:'top',horizontal:'right'}} open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
-                <Alert severity={currentSeverity} >
-                    {currentMessage}
-                </Alert>
-            </Snackbar>
+           
             <Grid  item xs={11} md={7} sx={{backgroundColor: listColor,height:'fit-content',mb:4}}>
                 <Grid container sx={{justifyContent: 'center',pt:3}}>
                     <AccountCircleIcon color="secondary" sx={{fontSize:'5em'}}></AccountCircleIcon>

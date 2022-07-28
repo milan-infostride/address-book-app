@@ -14,13 +14,25 @@ import { Redirect, Route } from 'react-router-dom';
 import Login from './components/pages/Login'
 import Signup from './components/pages/Signup';
 import { currentUserActions } from './Stores/slices/current-user-slice';
+import { Alert, Snackbar } from '@mui/material';
+import { alertHandlerActions } from './Stores/slices/alert-handler-slice';
 var initialAddresses = [];
 
 
 
 function App() {
+  const alertData = useSelector(state=>state.alertHandlerSlice);
+  //const dispatch = useDispatch();
+ 
   const currentUser = useSelector(state=>state.currentUser.currentUser)
   const addresses = useSelector(state=> state.addresses.addresses)
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    addressDispatch(alertHandlerActions.closeAlert());
+};
 const addressDispatch = useDispatch();
 
   let dummyAddress = {
@@ -61,6 +73,7 @@ const addressDispatch = useDispatch();
       action.value = res;
       console.log('qction value',action.value);
       addressDispatch(addressActions.addAddress({newAddress:res}))
+      addressDispatch(alertHandlerActions.fireAlert({message:'Address Added Successfully..!!',severety:'success'}))
       // addressDispatch(action);
       if(sortType.length>0){
         let actionSort = {type:sortType}
@@ -90,6 +103,8 @@ const addressDispatch = useDispatch();
         // id: newAddress.id
       }
       addressDispatch(addressActions.editAddress({newAddress: newAddress}));
+      addressDispatch(alertHandlerActions.fireAlert({message:'Address Edited Successfully..!!',severety:'success'}))
+
     })
     
   }
@@ -109,6 +124,8 @@ const addressDispatch = useDispatch();
           }
         }
         addressDispatch(addressActions.removeAddress({id:id}));
+        addressDispatch(alertHandlerActions.fireAlert({message:'Address Deleted Successfully..!!',severety:'success'}))
+
       });
 
   }
@@ -245,6 +262,11 @@ const addressDispatch = useDispatch();
   return (
     <>
       <Navbar />
+      <Snackbar anchorOrigin={{vertical:'top',horizontal:'right'}} open={alertData.alertOpen} autoHideDuration={6000} onClose={handleClose}>
+                <Alert severity={alertData.severety} >
+                    {alertData.message}
+                </Alert>
+      </Snackbar>
       <Route path='/' exact>
         <Redirect to='/login'></Redirect>
       </Route>
