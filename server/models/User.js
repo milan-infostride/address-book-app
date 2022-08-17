@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const getDb = require('../conection').getDb;
 
 const userSchema = new Schema({
     profile_url: {
@@ -31,5 +32,8 @@ const userSchema = new Schema({
         }
     }]
 })
-
+userSchema.statics.findByEmail = function(email){
+    let db = getDb();
+    return  db.collection('users').findOne({email:{$eq:email}})
+}
 module.exports = mongoose.model('User',userSchema)
