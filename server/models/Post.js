@@ -12,6 +12,9 @@ const postSchema = new Schema({
     }],
     user: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'users'
     }
 })
+
+module.exports = mongoose.model('Post',postSchema);
