@@ -30,7 +30,29 @@ const userSchema = new Schema({
             required: false,
             ref:'chatAreas'
         }
-    }]
+    }],
+    followers: [{
+        user_id:{
+            type: Schema.Types.ObjectId,
+            required: false,
+            ref:'users'
+        }
+    }],
+    posts:[{
+        post_id:{
+            type: Schema.Types.ObjectId,
+            required: false,
+            ref: 'posts'
+        }
+    }],
+    is_private: {
+        type: 'boolean',
+        default: false
+    },
+    password: {
+        type: 'string',
+        required: true
+    }
 })
 userSchema.statics.findByEmail = function(email){
     let db = getDb();
