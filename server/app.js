@@ -6,7 +6,7 @@ const myConnect = require('./conection').myConnect;
 const getDb = require('./conection').getDb;
 const app = express();
 const server = http.createServer(app);
-const apiRoutes = require('./routes/api').apiRoutes
+const userRoutes = require('./routes/userRoutes')
 
 // const password = encodeURIComponent('Milansingh@1')
 // let db = null;
@@ -53,4 +53,4 @@ server.listen(5000,()=>{
 // setting bodyParser Middleware
 app.use(bodyParser.json());
 // setting api routes
-app.use(apiRoutes);
+app.use('/api',userRoutes);

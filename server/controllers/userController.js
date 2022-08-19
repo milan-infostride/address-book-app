@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const errorHandlingFunction = require("../util/errorHandlingFunction");
 
 const userController = {
   signUpUser: (req, res, next) => {
@@ -19,17 +20,18 @@ const userController = {
           newUser.groups = [];
           newUser.email = req.body.email;
           newUser.chat_areas = [];
+          newUser.password = bcrypt.hashSync(req.body.password, 12);
           let user = new User(newUser);
           return user.save();
         } else {
-          res.json({ message: "user already exist" });
+          res.status(500).json({ message: "user already exist" });
         }
 
         //currentUser = res;
       })
       .then((result) => {
         console.log("user Added");
-        res.json({ message: "user Added successfully" });
+        res.status(201).json({ message: "user Added successfully" });
       })
       .catch((err) => {
         console.log(err);
@@ -42,14 +44,17 @@ const userController = {
       .then((user) => {
         if (user) {
           currentUser = user;
-          return bcrypt.compare(req.password, user.password);
+          return bcrypt.compare(req.body.password, user.password);
         } else {
-          const error = new Error("user not found...!!");
+          // console.log("I am here")
+          const error = new Error();
+          error.message = "user not found...!!";
           error.statusCode = 404;
           throw error;
         }
       })
       .then((isValid) => {
+        console.log("isValid", isValid);
         if (isValid) {
           const token = jwt.sign(
             {
@@ -61,13 +66,18 @@ const userController = {
           );
           res.status(201).json({
             message: "Logged in",
-            userToken: token,
-            userId: currentUser._id.toString(),
+            user_token: token,
+            user_id: currentUser._id.toString(),
           });
         } else {
-          const error = new Error("Wrong Password");
+          const error = new Error();
+          error.message = "Wrong Password";
           error.statusCode = 402;
+          throw error;
         }
+      })
+      .catch((err) => {
+        errorHandlingFunction(err, res);
       });
   },
 };

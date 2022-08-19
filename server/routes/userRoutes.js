@@ -5,7 +5,7 @@ const userController = require('../controllers/userController')
 
 // user api's
 
-Router.post('/api/sign-up-user',userController.signUpUser)
+Router.post('/sign-up-user',userController.signUpUser)
 Router.post('/login-user',userController.loginUser)
 
 
