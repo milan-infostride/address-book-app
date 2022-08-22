@@ -6,10 +6,13 @@ const postSchema = new Schema({
         type: 'string',
         required: true
     },
-    image_urls: [{
-        type: String,
+    images: [{
+        type: Object,
         required: true
     }],
+    video: {
+        type: Object
+    },
     user: {
         type: Schema.Types.ObjectId,
         required: true,

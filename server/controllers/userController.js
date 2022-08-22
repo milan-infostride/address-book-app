@@ -62,7 +62,7 @@ const userController = {
               user_email: currentUser.email,
             },
             "meraSecret",
-            { expiresIn: "1h" }
+            { expiresIn: "10h" }
           );
           res.status(201).json({
             message: "Logged in",

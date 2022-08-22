@@ -1,4 +1,5 @@
 const http = require('http');
+const path = require('path');
 const express = require('express');
 // const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,6 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
+
 
 // const password = encodeURIComponent('Milansingh@1')
 // let db = null;
@@ -53,6 +55,10 @@ server.listen(5000,()=>{
 })
 // setting bodyParser Middleware
 app.use(bodyParser.json());
+app.use('/images',express.static(path.join(__dirname,'images')))
+
+app.use('/videos',express.static(path.join(__dirname,'videos')))
+
 // setting api routes
 app.use('/api',userRoutes);
-app.use('/api/post/',postRoutes);
+app.use('/api/post',postRoutes);
