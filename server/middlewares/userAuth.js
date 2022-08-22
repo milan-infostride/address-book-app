@@ -3,13 +3,21 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const userAuth = (req,res,next)=>{
-    const token = req.get('Authorization').split(' ')[1];
     let decodedToken = null;
+    const token = req.get('Authorization').split(' ')[1];
     try {
-        decodedToken = jwt.verify(token,'meraSecret')
+        if(req.get('Authorization')){
+            decodedToken = jwt.verify(token,'meraSecret')
+        }
+        else{
+            const error = new Error();
+            error.message = 'no authorization token send'
+            throw error;
+        }
+        
     }
     catch(err){
-        err.statusCode(500);
+        //err.statusCode(500);
         errorHandlingFunction(err,res);
     }
     if(!decodedToken){
@@ -25,3 +33,5 @@ const userAuth = (req,res,next)=>{
     }
     
 }
+
+module.exports = userAuth;

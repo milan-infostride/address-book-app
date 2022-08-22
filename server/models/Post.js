@@ -7,13 +7,13 @@ const postSchema = new Schema({
         required: true
     },
     image_urls: [{
-        type: 'string',
+        type: String,
         required: true
     }],
     user: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'users'
+        ref: 'User'
     }
 })
 

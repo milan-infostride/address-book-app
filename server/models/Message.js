@@ -18,7 +18,7 @@ const messageSchema = new Schema({
                 user_id:{
                     type: Schema.Types.ObjectId,
                     required: true,
-                    ref: 'users'
+                    ref: 'User'
                 }
             }
         ],
@@ -27,7 +27,7 @@ const messageSchema = new Schema({
                 user_id:{
                     type: Schema.Types.ObjectId,
                     required: true,
-                    ref: 'users'
+                    ref: 'User'
                 }
             }
         ],
@@ -36,7 +36,7 @@ const messageSchema = new Schema({
                 message_id:{
                     type: Schema.Types.ObjectId,
                     required: true,
-                    ref: 'messages'
+                    ref: 'Message'
                 }
             }
         ]

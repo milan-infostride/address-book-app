@@ -1,0 +1,10 @@
+const express = require('express');
+const Router = express.Router();
+const userAuth = require('../middlewares/userAuth');
+const postControlller = require('../controllers/postController')
+
+const Post = require('../models/Post');
+
+Router.post('/add-post',userAuth,postControlller.addPost)
+
+module.exports = Router;

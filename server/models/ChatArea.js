@@ -7,7 +7,7 @@ const chatAreaSchema = new Schema({
             user_id:{
                 type: Schema.Types.ObjectId,
                 required: true,
-                ref: 'users'
+                ref: 'User'
             }
         }
     ],
@@ -16,7 +16,7 @@ const chatAreaSchema = new Schema({
             message_id:{
                 type: Schema.Types.ObjectId,
                 required: true,
-                ref: 'users'
+                ref: 'User'
             }
         }
     ]

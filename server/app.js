@@ -7,6 +7,7 @@ const getDb = require('./conection').getDb;
 const app = express();
 const server = http.createServer(app);
 const userRoutes = require('./routes/userRoutes')
+const postRoutes = require('./routes/postRoutes')
 
 // const password = encodeURIComponent('Milansingh@1')
 // let db = null;
@@ -54,3 +55,4 @@ server.listen(5000,()=>{
 app.use(bodyParser.json());
 // setting api routes
 app.use('/api',userRoutes);
+app.use('/api/post/',postRoutes);

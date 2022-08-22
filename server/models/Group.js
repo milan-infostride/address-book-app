@@ -6,14 +6,14 @@ const groupSchema = new Schema({
         admin_id:{
             type: Schema.Types.ObjectId,
             required: true,
-            ref:'users'
+            ref:'User'
         }
     }],
     chat_area: {
         chat_id: {
             type: Schema.Types.ObjectId,
             required: true,
-            ref:'chatAreas'
+            ref:'ChatArea'
         }
     },
     profile_url: 'string',

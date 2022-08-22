@@ -80,6 +80,31 @@ const userController = {
         errorHandlingFunction(err, res);
       });
   },
+  getPosts: (req,res,next)=>{
+    //find user by id
+    let currentUser = null;
+    
+    User.findById(req.user_id,{posts: 1}) //project it to get only posts data
+    .then(foundUser=>{
+      console.log('foundUser = ',foundUser)
+      if(foundUser){
+        //go to posts field and populate it
+        currentUser = foundUser;
+        return foundUser.populate('posts')
+      }
+      const error = new Error();
+      error.message = 'invalid user';
+      throw error;
+    }).then(populatedPosts=>{
+      console.log('populated posts = ',populatedPosts)
+      //send it in response
+      res.status(200).json({posts: populatedPosts.posts})
+    })
+    .catch(err=>{
+      console.log('err = ',err);
+      errorHandlingFunction(err,res);
+    })
+  }
 };
 
 module.exports = userController;

@@ -13,11 +13,11 @@ const userSchema = new Schema({
     },
     number: 'number',
     groups: [{
-        group_id:{
+        
             type: Schema.Types.ObjectId,
             required: false,
-            ref:'groups'
-        }
+            ref:'Group'
+        
     }],
     email: {
         type: 'string',
@@ -25,25 +25,23 @@ const userSchema = new Schema({
         unique: true
     },
     chat_areas: [{
-        chat_id:{
+        
             type: Schema.Types.ObjectId,
             required: false,
-            ref:'chatAreas'
-        }
+            ref:'ChatArea'
+       
     }],
     followers: [{
-        user_id:{
+      
             type: Schema.Types.ObjectId,
             required: false,
-            ref:'users'
-        }
+            ref:'User'
+       
     }],
     posts:[{
-        post_id:{
-            type: Schema.Types.ObjectId,
-            required: false,
-            ref: 'posts'
-        }
+       type: Schema.Types.ObjectId,
+        required: false,
+        ref: 'Post'
     }],
     is_private: {
         type: 'boolean',
