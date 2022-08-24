@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="#meraCheckout">Checkout</button>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+
+        function order(){
+            fetch('http://localhost:5000/service-checkout-handler',{
+                headers: {
+                    'Authorization': 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjJmZmRkNzU2NGYwYWQzYTdlNjJkNGZlIiwidXNlcl9lbWFpbCI6Im1pbGFuc2luZ2hkYXZAZ21haWwuY29tIiwiaWF0IjoxNjYxMzc1MzI1LCJleHAiOjE2NjE0MTEzMjV9.Vt4TCqfhFYbL6mTMF9YzgitB-hUyLi7pjez9lUcNxjY'
+                }
+            })
+            .then(res=>{
+                if(res.status!=200){
+                    alert('some error occurred...!')
+                    throw new Error('some error occured');
+                }
+                else{
+                   fetch('http://localhost:5000/success-checkout-handler'); 
+                }
+
+            })
+            .catch(err=>{
+                console.log('front end error...!!');
+            })
+            // .then()
+            // stripe.redirectToChechout({
+
+            // })
+        }
+        let button =  document.getElementById('meraCheckout')
+        button.onclick(order);
+    </script>
+</body>
+</html>

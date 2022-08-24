@@ -9,6 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
+const serviceCheckoutRoutes = require('./routes/serviceCheckoutRoutes');
 
 
 // const password = encodeURIComponent('Milansingh@1')
@@ -54,6 +55,8 @@ server.listen(5000,()=>{
 
 })
 // setting bodyParser Middleware
+
+app.set('view engine','ejs');
 app.use(bodyParser.json());
 app.use('/images',express.static(path.join(__dirname,'images')))
 
@@ -62,3 +65,4 @@ app.use('/videos',express.static(path.join(__dirname,'videos')))
 // setting api routes
 app.use('/api',userRoutes);
 app.use('/api/post',postRoutes);
+app.use(serviceCheckoutRoutes);
