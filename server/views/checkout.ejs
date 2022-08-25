@@ -7,36 +7,47 @@
     <title>Document</title>
 </head>
 <body>
-    <button id="#meraCheckout">Checkout</button>
+    <button id="#meraCheckout" onclick="order()">Checkout</button>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
 
         function order(){
+            var stripe = Stripe('pk_test_51LaKL4SBkB8engaIEwJL8S7pWhwVFZiWtxyjpUQSzlgbcex50dpzMtPFGgDBHBAhA72SqDFgn4ZuQY861KDmTzrM00MTBA2nbT')
+            let myHeaders = new Headers({
+                'Authorization': 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjJmZmRkNzU2NGYwYWQzYTdlNjJkNGZlIiwidXNlcl9lbWFpbCI6Im1pbGFuc2luZ2hkYXZAZ21haWwuY29tIiwiaWF0IjoxNjYxNDM2MzM4LCJleHAiOjE2NjE0NzIzMzh9.45QqV-Zhis7Mg1vPq2_sv9erOCNgeJN5dQ8znyJ3q9s'
+            });
+
             fetch('http://localhost:5000/service-checkout-handler',{
-                headers: {
-                    'Authorization': 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjJmZmRkNzU2NGYwYWQzYTdlNjJkNGZlIiwidXNlcl9lbWFpbCI6Im1pbGFuc2luZ2hkYXZAZ21haWwuY29tIiwiaWF0IjoxNjYxMzc1MzI1LCJleHAiOjE2NjE0MTEzMjV9.Vt4TCqfhFYbL6mTMF9YzgitB-hUyLi7pjez9lUcNxjY'
-                }
+                headers: myHeaders
             })
             .then(res=>{
+                console.log('res 1',res)
                 if(res.status!=200){
                     alert('some error occurred...!')
                     throw new Error('some error occured');
                 }
                 else{
-                   fetch('http://localhost:5000/success-checkout-handler'); 
+                    return res.json();
                 }
-
+                
+            })
+            .then(res=>{
+                console.log(res);
+                //console.log(res.body);
+                //call stripe
+                stripe.redirectToCheckout({
+                    sessionId: res.sessionId
+                })
             })
             .catch(err=>{
-                console.log('front end error...!!');
+                // alert(err)
+                console.log(err);
             })
             // .then()
             // stripe.redirectToChechout({
 
             // })
         }
-        let button =  document.getElementById('meraCheckout')
-        button.onclick(order);
     </script>
 </body>
 </html>

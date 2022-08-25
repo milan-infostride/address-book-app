@@ -8,6 +8,6 @@ Router.get('/checkout',(req,res,next)=>{
     res.render('checkout')
 })
 Router.get('/service-checkout-handler',userAuth,serviceController.serviceCheckoutHandler);
-Router.post('/success-checkout-handler',userAuth,serviceController.successCheckoutHandler);
+Router.get('/success-checkout-handler',serviceController.successCheckoutHandler);
 
 module.exports = Router;
