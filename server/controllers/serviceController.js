@@ -11,6 +11,8 @@ const errorHandlingFunction = require('../util/errorHandlingFunction');
 
 const generateStripeSession = (items,successUrl,cancelUrl)=>{
 
+    //return await stripe.checkout.sessions.create(....);
+    
     
     return stripe.checkout.sessions.create({
         line_items: items.map(item=>{
